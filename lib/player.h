@@ -7,5 +7,5 @@ typedef struct
 } Player;
 
 void CreatePlayer(Player *, int, int, Texture2D);
-//Rectangle CreateHitbox(Player *);
-//void UpdateHitbox(Player *);
+Rectangle CreatePlayerHitbox(Player *);
+void UpdatePlayerHitbox(Player *);

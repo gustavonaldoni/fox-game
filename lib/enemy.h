@@ -1,4 +1,5 @@
-typedef struct {
+typedef struct
+{
     int x, y;
     Texture2D texture;
     int numberOfFrames;
@@ -6,5 +7,5 @@ typedef struct {
 } Enemy;
 
 void CreateEnemy(Enemy *, int, int, Texture2D, int);
-Rectangle CreateHitbox(Enemy *);
-void UpdateHitbox(Enemy *);
+Rectangle CreateEnemyHitbox(Enemy *);
+void UpdateEnemyHitbox(Enemy *);
