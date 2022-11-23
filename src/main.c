@@ -1,5 +1,5 @@
 #include "raylib.h"
-#include "../lib/players.h"
+#include "../lib/player.h"
 #include "../lib/stopwatch.h"
 #include "../lib/animation.h"
 
@@ -16,7 +16,7 @@ int main(void)
     Stopwatch stopwatchAttack = StopwatchCreate(0.04f);
     Player player;
 
-    createPlayer(&player, 100, 363, playerTextures[0]);
+    CreatePlayer(&player, 100, 363, playerTextures[0]);
 
     int frameRight = 0, frameAttack = 0;
 
