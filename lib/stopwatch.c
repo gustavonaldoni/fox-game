@@ -1,13 +1,6 @@
-typedef struct
-{
-    float endSeconds;
-    float currentSeconds;
-} Stopwatch;
-
-Stopwatch StopwatchCreate(float);
-void StopwatchReset(Stopwatch *);
-bool StopwatchIsDone(Stopwatch);
-void StopwatchUpdate(Stopwatch *);
+#include <stdbool.h>
+#include "stopwatch.h"
+#include "raylib.h"
 
 Stopwatch StopwatchCreate(float endSeconds)
 {

@@ -1,10 +1,10 @@
 // cc src/main.c -o build/a.out include/*.c -lraylib -lGL -lm -lpthread -ldl -lrt -lX11 -Wall -Werror -I./lib
 
 #include "raylib.h"
-#include "../lib/player.h"
-#include "../lib/stopwatch.h"
-#include "../lib/animation.h"
-#include "../lib/enemy.h"
+#include "player.h"
+#include "stopwatch.h"
+#include "animation.h"
+#include "enemy.h"
 
 int main(void)
 {
