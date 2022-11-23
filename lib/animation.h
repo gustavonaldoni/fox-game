@@ -18,7 +18,7 @@ void AnimateTexture(Player *player, Stopwatch *stopwatch, int maxFrames, int *fr
 
     DrawTexturePro(player->texture,
                    (Rectangle){frameWidth * (*frame), 0, frameWidth, player->texture.height},
-                   (Rectangle){player->screenX, player->screenY, frameWidth * scaleFactor, player->texture.height * scaleFactor},
+                   (Rectangle){player->x, player->y, frameWidth * scaleFactor, player->texture.height * scaleFactor},
                    (Vector2){0, 0},
                    rotation,
                    RAYWHITE);

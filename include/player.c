@@ -1,10 +1,9 @@
 #include "raylib.h"
 #include "player.h"
 
-void CreatePlayer(Player *Player, int screenX, int screenY, Texture2D texture)
+void CreatePlayer(Player *Player, int x, int y, Texture2D texture)
 {
-  Player->id = 1;
-  Player->screenX = screenX;
-  Player->screenY = screenY;
+  Player->x = x;
+  Player->y = y;
   Player->texture = texture;
 }

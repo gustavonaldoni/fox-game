@@ -4,6 +4,7 @@
 #include "../lib/player.h"
 #include "../lib/stopwatch.h"
 #include "../lib/animation.h"
+#include "../lib/enemy.h"
 
 int main(void)
 {
@@ -13,7 +14,7 @@ int main(void)
     Texture2D playerTextures[2] = {LoadTexture("../img/rDireita.png"), LoadTexture("../img/rAtaque.png")};
 
     Stopwatch stopwatchRight = StopwatchCreate(0.08f);
-    Stopwatch stopwatchAttack = StopwatchCreate(0.04f);
+    Stopwatch stopwatchAttack = StopwatchCreate(0.02f);
     Player player;
 
     CreatePlayer(&player, 100, 363, playerTextures[0]);
@@ -29,13 +30,13 @@ int main(void)
         if (IsKeyDown(KEY_J))
         {   
             player.texture = playerTextures[1];
-            player.screenY = 220;
+            player.y = 220;
             AnimateTexture(&player, &stopwatchAttack, 9, &frameAttack, 1.0f, player.texture);
         }
         else
         {
             player.texture = playerTextures[0];
-            player.screenY = 310;
+            player.y = 310;
             AnimateTexture(&player, &stopwatchRight, 7, &frameRight, 1.0f, player.texture);
         }
 
