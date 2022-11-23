@@ -1,9 +1,9 @@
+// cc src/main.c -o build/a.out include/*.c -lraylib -lGL -lm -lpthread -ldl -lrt -lX11 -Wall -Werror -I./lib
+
 #include "raylib.h"
 #include "../lib/player.h"
 #include "../lib/stopwatch.h"
 #include "../lib/animation.h"
-
-// Compile with: cc src/*.c -o build/a.out -lraylib -lGL -lm -lpthread -ldl -lrt -lX11 -Wall -Werror
 
 int main(void)
 {
