@@ -1,5 +1,5 @@
 #include "raylib.h"
-#include "../lib/player.h"
+#include "player.h"
 
 void CreatePlayer(Player *Player, int screenX, int screenY, Texture2D texture)
 {

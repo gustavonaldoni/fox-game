@@ -29,13 +29,13 @@ int main(void)
         if (IsKeyDown(KEY_J))
         {   
             player.texture = playerTextures[1];
-            player.screenY = 273;
-            AnimateTexture(&player, &stopwatchAttack, 10, &frameAttack, 1.0f, player.texture);
+            player.screenY = 220;
+            AnimateTexture(&player, &stopwatchAttack, 9, &frameAttack, 1.0f, player.texture);
         }
         else
         {
             player.texture = playerTextures[0];
-            player.screenY = 363;
+            player.screenY = 310;
             AnimateTexture(&player, &stopwatchRight, 7, &frameRight, 1.0f, player.texture);
         }
 
