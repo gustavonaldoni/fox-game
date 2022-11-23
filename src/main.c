@@ -5,6 +5,7 @@
 #include "stopwatch.h"
 #include "animation.h"
 #include "enemy.h"
+#include "collision.h"
 
 int main(void)
 {
@@ -31,13 +32,13 @@ int main(void)
         {   
             player.texture = playerTextures[1];
             player.y = 220;
-            AnimateTexture(&player, &stopwatchAttack, 9, &frameAttack, 1.0f, player.texture);
+            AnimatePlayerTexture(&player, &stopwatchAttack, 9, &frameAttack, 1.0f, player.texture);
         }
         else
         {
             player.texture = playerTextures[0];
             player.y = 310;
-            AnimateTexture(&player, &stopwatchRight, 7, &frameRight, 1.0f, player.texture);
+            AnimatePlayerTexture(&player, &stopwatchRight, 7, &frameRight, 1.0f, player.texture);
         }
 
         EndDrawing();

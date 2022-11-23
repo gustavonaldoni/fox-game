@@ -1,0 +1,1 @@
+bool CheckCollisionEnemyPlayer(Enemy, Player);

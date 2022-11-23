@@ -1,5 +1,6 @@
 #include "raylib.h"
 #include "enemy.h"
+#include "player.h"
 
 void CreateEnemy(Enemy *enemy, int x, int y, Texture2D texture, int numberOfFrames)
 {
