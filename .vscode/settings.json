@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "raylib.h": "c",
+        "players.h": "c",
+        "move.h": "c"
+    }
+}
