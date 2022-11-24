@@ -3,6 +3,7 @@
         "raylib.h": "c",
         "players.h": "c",
         "move.h": "c",
-        "stopwatch.h": "c"
+        "stopwatch.h": "c",
+        "background.h": "c"
     }
 }

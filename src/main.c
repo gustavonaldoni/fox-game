@@ -6,19 +6,22 @@
 #include "animation.h"
 #include "enemy.h"
 #include "collision.h"
+#include "background.h"
 
 int main(void)
 {
     InitWindow(1000, 600, "Fox Game");
 
-    Texture2D background = LoadTexture("../img/rCenario.png");
+    Texture2D backgroundTexture = LoadTexture("../img/rCenario.png");
+    Background background;
+    CreateBackground(&background, backgroundTexture);
+
+    Player player;
     Texture2D playerTextures[2] = {LoadTexture("../img/rDireita.png"), LoadTexture("../img/rAtaque.png")};
+    CreatePlayer(&player, 100, 363, playerTextures[0]);
 
     Stopwatch stopwatchRight = StopwatchCreate(0.08f);
     Stopwatch stopwatchAttack = StopwatchCreate(0.02f);
-    Player player;
-
-    CreatePlayer(&player, 100, 363, playerTextures[0]);
 
     int frameRight = 0, frameAttack = 0;
 
@@ -26,7 +29,7 @@ int main(void)
     {
         BeginDrawing();
         ClearBackground(RAYWHITE);
-        DrawTextureEx(background, (Vector2){0, 0}, 0.0f, 5.1f, RAYWHITE);
+        ShowBackground(background);
 
         if (IsKeyDown(KEY_J))
         {   
