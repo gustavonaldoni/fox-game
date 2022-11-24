@@ -8,6 +8,8 @@
 #include "collision.h"
 #include "background.h"
 
+#define MAX_FPS 144
+
 int main(void)
 {
     InitWindow(1000, 600, "Fox Game");
@@ -25,10 +27,14 @@ int main(void)
 
     int frameRight = 0, frameAttack = 0;
 
+    SetTargetFPS(MAX_FPS);
+
     while (!WindowShouldClose())
     {
         BeginDrawing();
         ClearBackground(RAYWHITE);
+
+        MoveBackground(&background);
         ShowBackground(background);
 
         if (IsKeyDown(KEY_J))
