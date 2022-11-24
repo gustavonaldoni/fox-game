@@ -1,4 +1,4 @@
-// cc src/main.c -o build/a.out include/*.c -lraylib -lGL -lm -lpthread -ldl -lrt -lX11 -Wall -Werror -I./lib
+// cc src/main.c -o build/a.out lib/*.c -lraylib -lGL -lm -lpthread -ldl -lrt -lX11 -Wall -Werror -I./include
 
 #include "raylib.h"
 #include "player.h"
