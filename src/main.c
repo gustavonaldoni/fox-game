@@ -53,6 +53,11 @@ int main(void)
         EndDrawing();
     }
 
+    UnloadTexture(backgroundTexture);
+    UnloadTexture(background.texture);
+    UnloadTexture(playerTextures[0]);
+    UnloadTexture(playerTextures[1]);
+
     CloseWindow();
 
     return 0;
