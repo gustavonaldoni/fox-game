@@ -7,7 +7,7 @@
 #include "animation.h"
 #include "collision.h"
 #include "background.h"
-#include "button.h"
+#include "actionButton.h"
 
 #define MAX_FPS 144
 
@@ -27,14 +27,20 @@ int main(void)
   Texture2D enemyTexture[1] = {LoadTexture("../img/SlimeRtoL.png")};
   CreateEnemy(&enemy, 900, 363, enemyTexture[0], 2);
 
-  Texture2D attackButton[2] = {LoadTexture("../img/rAttackButton.png"), LoadTexture("../img/rPressedAttackButton.png")};
-  Texture2D defenseButton[2] = {LoadTexture("../img/rDefenseButton.png"), LoadTexture("../img/rPressedDefenseButton.png")};
-  Texture2D potionButton[2] = {LoadTexture("../img/rPotionButton.png"), LoadTexture("../img/rPressedPotionButton.png")};
+  ActionButton attackActionButton;
+  CreateActionButton(&attackActionButton, 0, 0, LoadTexture("../img/rAttackButton.png"), LoadTexture("../img/rPressedAttackButton.png"));
+
+  ActionButton defenseActionButton;
+  CreateActionButton(&defenseActionButton, 0, 0, LoadTexture("../img/rDefenseButton.png"), LoadTexture("../img/rPressedDefenseButton.png"));
+
+  ActionButton potionActionButton;
+  CreateActionButton(&potionActionButton, 0, 0, LoadTexture("../img/rPotionButton.png"), LoadTexture("../img/rPressedPotionButton.png"));
+
   Texture2D playerHealth[2] = {LoadTexture("../img/rHealth.png"), LoadTexture("../img/rHealthDeath.png")};
 
   Stopwatch stopwatchRight = StopwatchCreate(0.08f);
   Stopwatch stopwatchAttack = StopwatchCreate(0.02f);
-  Stopwatch stopwatchEnemy = StopwatchCreate(0.08);
+  Stopwatch stopwatchEnemy = StopwatchCreate(0.08f);
 
   int frameRight = 0, frameAttack = 0, frameEnemy = 0;
 
@@ -54,12 +60,16 @@ int main(void)
 
     DrawPlayerHealth(player, playerHealth[0], playerHealth[1]);
 
+    ActionButton actionButtons[3] = {attackActionButton, defenseActionButton, potionActionButton};
+    DrawActionButtons(actionButtons, 3);
+
     if (IsKeyDown(KEY_A))
     {
       player.texture = playerTextures[1];
       player.y = 220;
       AnimatePlayerTexture(&player, &stopwatchAttack, 9, &frameAttack, 1.0f, player.texture);
-      actionButton(attackButton, defenseButton, potionButton, 1);
+
+      attackActionButton.isPressed = 1;
     }
     else
     {
@@ -69,15 +79,17 @@ int main(void)
 
       if (IsKeyDown(KEY_D))
       {
-        actionButton(attackButton, defenseButton, potionButton, 2);
+        defenseActionButton.isPressed = 1;
       }
       else if (IsKeyDown(KEY_C))
       {
-        actionButton(attackButton, defenseButton, potionButton, 3);
+        potionActionButton.isPressed = 1;
       }
       else
       {
-        actionButton(attackButton, defenseButton, potionButton, 0);
+        ResetActionButton(&attackActionButton);
+        ResetActionButton(&defenseActionButton);
+        ResetActionButton(&potionActionButton);
       }
     }
 

@@ -4,6 +4,7 @@
         "players.h": "c",
         "move.h": "c",
         "stopwatch.h": "c",
-        "background.h": "c"
+        "background.h": "c",
+        "actionbutton.h": "c"
     }
 }
