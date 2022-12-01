@@ -52,3 +52,9 @@ void ResetActionButton(ActionButton *actionButton)
 {
   actionButton->isPressed = 0;
 }
+
+void UnloadActionButtonTextures(ActionButton *actionButton)
+{
+  UnloadTexture(actionButton->normalTexture);
+  UnloadTexture(actionButton->pressedTexture);
+}

@@ -118,6 +118,11 @@ int main(void)
   UnloadTexture(background.texture);
   UnloadTexture(playerTextures[0]);
   UnloadTexture(playerTextures[1]);
+  UnloadTexture(player.texture);
+
+  UnloadActionButtonTextures(&attackActionButton);
+  UnloadActionButtonTextures(&defenseActionButton);
+  UnloadActionButtonTextures(&potionActionButton);
 
   CloseWindow();
   return 0;
