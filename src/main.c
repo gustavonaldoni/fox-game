@@ -27,6 +27,7 @@ int main(void)
 
   Enemy enemy;
   CreateEnemy(&enemy, 900, 375, LoadTexture("../img/SlimeRtoL.png"), 8, 100.0f);
+  CreateEnemyHitbox(&enemy);
 
   ActionButton attackActionButton;
   CreateActionButton(&attackActionButton, 0, 0, LoadTexture("../img/rAttackButton.png"), LoadTexture("../img/rPressedAttackButton.png"));
@@ -59,13 +60,20 @@ int main(void)
 
     DrawPlayerHealth(player, playerHealth[0], playerHealth[1]);
     UpdatePlayerHitbox(&player);
-    DrawPlayerHitbox(player);
+    // DrawPlayerHitbox(player); // ONLY activate this for debbuging
 
     ActionButton actionButtons[3] = {attackActionButton, defenseActionButton, potionActionButton};
     DrawActionButtons(actionButtons, 3);
 
+    UpdateEnemyHitbox(&enemy);
+    // DrawEnemyHitbox(enemy); // ONLY activate this for debbuging
     MoveEnemy(&enemy);
     AnimateEnemyTexture(&enemy, &stopwatchEnemy, enemy.numberOfFrames, &frameEnemy, 1.0f, enemy.texture);
+
+    if (CheckCollisionEnemyPlayer(enemy, player))
+    {
+      enemy.x += 200;
+    }
 
     if (IsKeyDown(KEY_A))
     {

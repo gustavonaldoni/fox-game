@@ -29,7 +29,7 @@ void UpdatePlayerHitbox(Player *player)
 {
   player->hitbox.x = player->x;
   player->hitbox.y = player->y;
-  player->hitbox.width = (player->texture.width / player->numberOfFrames);
+  player->hitbox.width = (player->texture.width / player->numberOfFrames) - 60;
   player->hitbox.height = player->texture.height;
 }
 

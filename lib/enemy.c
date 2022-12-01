@@ -18,7 +18,7 @@ void CreateEnemyHitbox(Enemy *enemy)
     hitbox.x = enemy->x;
     hitbox.y = enemy->y;
     hitbox.width = enemy->texture.width / enemy->numberOfFrames;
-    hitbox.height = enemy->texture.height / enemy->numberOfFrames;
+    hitbox.height = enemy->texture.height;
 
     enemy->hitbox = hitbox;
 }
@@ -27,6 +27,8 @@ void UpdateEnemyHitbox(Enemy *enemy)
 {
     enemy->hitbox.x = enemy->x;
     enemy->hitbox.y = enemy->y;
+    enemy->hitbox.width = enemy->texture.width / enemy->numberOfFrames;
+    enemy->hitbox.height = enemy->texture.height;
 }
 
 void DrawEnemyHitbox(Enemy enemy)
