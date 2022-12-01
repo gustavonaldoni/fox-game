@@ -2,21 +2,25 @@
 #include "enemy.h"
 #include "player.h"
 
-void CreateEnemy(Enemy *enemy, int x, int y, Texture2D texture, int numberOfFrames)
+void CreateEnemy(Enemy *enemy, int x, int y, Texture2D texture, int numberOfFrames, float speed)
 {
     enemy->x = x;
     enemy->y = y;
     enemy->texture = texture;
+    enemy->numberOfFrames = numberOfFrames;
+    enemy->speed = speed;
 }
 
-void CreateEnemyHitbox(Enemy *enemy, Rectangle *hitbox)
+void CreateEnemyHitbox(Enemy *enemy)
 {
-    hitbox->x = enemy->x;
-    hitbox->y = enemy->y;
-    hitbox->width = enemy->texture.width / enemy->numberOfFrames;
-    hitbox->height = enemy->texture.height / enemy->numberOfFrames;
+    Rectangle hitbox;
 
-    enemy->hitbox = *hitbox;
+    hitbox.x = enemy->x;
+    hitbox.y = enemy->y;
+    hitbox.width = enemy->texture.width / enemy->numberOfFrames;
+    hitbox.height = enemy->texture.height / enemy->numberOfFrames;
+
+    enemy->hitbox = hitbox;
 }
 
 void UpdateEnemyHitbox(Enemy *enemy)
@@ -28,4 +32,9 @@ void UpdateEnemyHitbox(Enemy *enemy)
 void DrawEnemyHitbox(Enemy enemy)
 {
     DrawRectangleRec(enemy.hitbox, RED);
+}
+
+void MoveEnemy(Enemy *enemy)
+{
+    enemy->x -= enemy->speed * GetFrameTime();
 }

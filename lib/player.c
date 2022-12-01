@@ -1,7 +1,7 @@
 #include "raylib.h"
 #include "player.h"
 
-void CreatePlayer(Player *player, int x, int y, Texture2D texture)
+void CreatePlayer(Player *player, int x, int y, Texture2D texture, int numberOfFrames)
 {
   const int maxHealth = 5;
 
@@ -10,22 +10,27 @@ void CreatePlayer(Player *player, int x, int y, Texture2D texture)
   player->texture = texture;
   player->maxHealth = maxHealth;
   player->health = player->maxHealth;
+  player->numberOfFrames = numberOfFrames;
 }
 
-void CreatePlayerHitbox(Player *player, Rectangle *hitbox)
+void CreatePlayerHitbox(Player *player)
 {
-  hitbox->x = player->x;
-  hitbox->y = player->y;
-  hitbox->width = player->texture.width / player->numberOfFrames;
-  hitbox->height = player->texture.height / player->numberOfFrames;
+  Rectangle hitbox;
 
-  player->hitbox = *hitbox;
+  hitbox.x = player->x;
+  hitbox.y = player->y;
+  hitbox.width = (player->texture.width / player->numberOfFrames);
+  hitbox.height = player->texture.height;
+
+  player->hitbox = hitbox;
 }
 
 void UpdatePlayerHitbox(Player *player)
 {
   player->hitbox.x = player->x;
   player->hitbox.y = player->y;
+  player->hitbox.width = (player->texture.width / player->numberOfFrames);
+  player->hitbox.height = player->texture.height;
 }
 
 void DrawPlayerHitbox(Player player)

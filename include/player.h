@@ -7,8 +7,8 @@ typedef struct
     Rectangle hitbox;
 } Player;
 
-void CreatePlayer(Player *, int, int, Texture2D);
-void CreatePlayerHitbox(Player *, Rectangle *);
+void CreatePlayer(Player *, int, int, Texture2D, int);
+void CreatePlayerHitbox(Player *);
 void UpdatePlayerHitbox(Player *);
 void DrawPlayerHitbox(Player);
 void DrawPlayerHealth(Player, Texture2D, Texture2D);

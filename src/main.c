@@ -10,7 +10,7 @@
 #include "actionButton.h"
 
 #define MAX_FPS 144
-#define ENEMY_SPEED 1
+#define PLAYER_BASE_Y 310
 
 int main(void)
 {
@@ -22,11 +22,11 @@ int main(void)
 
   Player player;
   Texture2D playerTextures[2] = {LoadTexture("../img/rDireita.png"), LoadTexture("../img/rAtaque.png")};
-  CreatePlayer(&player, 100, 363, playerTextures[0]);
+  CreatePlayer(&player, 100, PLAYER_BASE_Y, playerTextures[0], 7);
+  CreatePlayerHitbox(&player);
 
   Enemy enemy;
-  Texture2D enemyTexture[1] = {LoadTexture("../img/SlimeRtoL.png")};
-  CreateEnemy(&enemy, 900, 363, enemyTexture[0], 2);
+  CreateEnemy(&enemy, 900, 375, LoadTexture("../img/SlimeRtoL.png"), 8, 100.0f);
 
   ActionButton attackActionButton;
   CreateActionButton(&attackActionButton, 0, 0, LoadTexture("../img/rAttackButton.png"), LoadTexture("../img/rPressedAttackButton.png"));
@@ -43,7 +43,9 @@ int main(void)
   Stopwatch stopwatchAttack = StopwatchCreate(0.02f);
   Stopwatch stopwatchEnemy = StopwatchCreate(0.08f);
 
-  int frameRight = 0, frameAttack = 0, frameEnemy = 0;
+  int frameRight = 0;
+  int frameAttack = 0;
+  int frameEnemy = 0;
 
   SetTargetFPS(MAX_FPS);
 
@@ -56,28 +58,14 @@ int main(void)
     ShowBackground(background);
 
     DrawPlayerHealth(player, playerHealth[0], playerHealth[1]);
+    UpdatePlayerHitbox(&player);
+    DrawPlayerHitbox(player);
 
     ActionButton actionButtons[3] = {attackActionButton, defenseActionButton, potionActionButton};
     DrawActionButtons(actionButtons, 3);
 
-    enemy.texture = enemyTexture[0];
-    enemy.y = 375;
-
-    if (enemy.x <= player.x + enemy.texture.width / 9)
-    {
-      
-      enemy.x += 100;
-      AnimateEnemyTexture(&enemy, &stopwatchEnemy, 8, &frameEnemy, 1.0f, enemy.texture);
-      player.health -= 1;
-    }
-    else
-    {
-      AnimateEnemyTexture(&enemy, &stopwatchEnemy, 8, &frameEnemy, 1.0f, enemy.texture);
-      enemy.x -= ENEMY_SPEED;
-    }
-
-    if (IsKeyDown(KEY_P))
-      enemy.x = 900;
+    MoveEnemy(&enemy);
+    AnimateEnemyTexture(&enemy, &stopwatchEnemy, enemy.numberOfFrames, &frameEnemy, 1.0f, enemy.texture);
 
     if (IsKeyDown(KEY_A))
     {
@@ -88,11 +76,13 @@ int main(void)
 
       attackActionButton.isPressed = 1;
     }
+
     else
     {
       player.texture = playerTextures[0];
-      player.y = 310;
       player.numberOfFrames = 7;
+      player.y = PLAYER_BASE_Y;
+
       AnimatePlayerTexture(&player, &stopwatchRight, player.numberOfFrames, &frameRight, 1.0f, player.texture);
 
       if (IsKeyDown(KEY_D))
@@ -109,15 +99,9 @@ int main(void)
         ResetActionButton(&defenseActionButton);
         ResetActionButton(&potionActionButton);
       }
-
-      if (player.health <= 0)
-      {
-        DrawText("SE FUDEU", 500 - MeasureText("SE FUDEU", 90) / 2, 300, 90, RED);
-        player.health = 0;
-      }
-
-      EndDrawing();
     }
+
+    EndDrawing();
   }
 
   UnloadTexture(backgroundTexture);
