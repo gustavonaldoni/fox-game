@@ -1,2 +1,10 @@
+EXECUTABLE_NAME = foxGame.out
+
+CC = cc
+RAYLIB_FLAGS = -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+CFLAGS = -Wall -Werror
+
+ALL_FLAGS = $(RAYLIB_FLAGS) $(CFLAGS)
+
 all:
-	cc src/main.c -o build/a.out lib/*.c -lraylib -lGL -lm -lpthread -ldl -lrt -lX11 -Wall -Werror -I./include
+	$(CC) src/main.c -o build/$(EXECUTABLE_NAME) lib/*.c $(ALL_FLAGS) -I./include
