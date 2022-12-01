@@ -12,3 +12,6 @@ void CreatePlayerHitbox(Player *);
 void UpdatePlayerHitbox(Player *);
 void DrawPlayerHitbox(Player);
 void DrawPlayerHealth(Player, Texture2D, Texture2D);
+void UpdatePlayerHealth(Player *, int);
+void ResetPlayerHealth(Player *);
+void KillPlayer(Player *);

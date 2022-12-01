@@ -61,3 +61,21 @@ void DrawPlayerHealth(Player player, Texture2D healthTexture, Texture2D deathTex
     x += betweenHealthSpace + healthTexture.width;
   }
 }
+
+void UpdatePlayerHealth(Player *player, int healthToAdd)
+{
+  player->health += healthToAdd;
+
+  if (player->health < 0)
+    player->health = 0;
+}
+
+void ResetPlayerHealth(Player *player)
+{
+  player->health = player->maxHealth;
+}
+
+void KillPlayer(Player *player)
+{
+  player->health = 0;
+}

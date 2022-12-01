@@ -6,6 +6,7 @@
         "stopwatch.h": "c",
         "background.h": "c",
         "actionbutton.h": "c",
-        "animation.h": "c"
+        "animation.h": "c",
+        "raymath.h": "c"
     }
 }

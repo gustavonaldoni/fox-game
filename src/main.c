@@ -1,6 +1,7 @@
 // cc src/main.c -o build/a.out lib/*.c -lraylib -lGL -lm -lpthread -ldl -lrt -lX11 -Wall -Werror -I./include
 
 #include "raylib.h"
+#include "raymath.h"
 #include "player.h"
 #include "stopwatch.h"
 #include "enemy.h"
@@ -73,6 +74,7 @@ int main(void)
     if (CheckCollisionEnemyPlayer(enemy, player))
     {
       enemy.x += 200;
+      UpdatePlayerHealth(&player, -1);
     }
 
     if (IsKeyDown(KEY_A))
