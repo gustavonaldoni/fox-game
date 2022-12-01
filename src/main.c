@@ -10,6 +10,7 @@
 #include "actionButton.h"
 
 #define MAX_FPS 144
+#define ENEMY_SPEED 1
 
 int main(void)
 {
@@ -54,20 +55,36 @@ int main(void)
     MoveBackground(&background);
     ShowBackground(background);
 
-    enemy.texture = enemyTexture[0];
-    enemy.y = 375;
-    AnimateEnemyTexture(&enemy, &stopwatchEnemy, 8, &frameEnemy, 1.0f, enemy.texture);
-
     DrawPlayerHealth(player, playerHealth[0], playerHealth[1]);
 
     ActionButton actionButtons[3] = {attackActionButton, defenseActionButton, potionActionButton};
     DrawActionButtons(actionButtons, 3);
 
+    enemy.texture = enemyTexture[0];
+    enemy.y = 375;
+
+    if (enemy.x <= player.x + enemy.texture.width / 9)
+    {
+      
+      enemy.x += 100;
+      AnimateEnemyTexture(&enemy, &stopwatchEnemy, 8, &frameEnemy, 1.0f, enemy.texture);
+      player.health -= 1;
+    }
+    else
+    {
+      AnimateEnemyTexture(&enemy, &stopwatchEnemy, 8, &frameEnemy, 1.0f, enemy.texture);
+      enemy.x -= ENEMY_SPEED;
+    }
+
+    if (IsKeyDown(KEY_P))
+      enemy.x = 900;
+
     if (IsKeyDown(KEY_A))
     {
       player.texture = playerTextures[1];
       player.y = 220;
-      AnimatePlayerTexture(&player, &stopwatchAttack, 9, &frameAttack, 1.0f, player.texture);
+      player.numberOfFrames = 9;
+      AnimatePlayerTexture(&player, &stopwatchAttack, player.numberOfFrames, &frameAttack, 1.0f, player.texture);
 
       attackActionButton.isPressed = 1;
     }
@@ -75,7 +92,8 @@ int main(void)
     {
       player.texture = playerTextures[0];
       player.y = 310;
-      AnimatePlayerTexture(&player, &stopwatchRight, 7, &frameRight, 1.0f, player.texture);
+      player.numberOfFrames = 7;
+      AnimatePlayerTexture(&player, &stopwatchRight, player.numberOfFrames, &frameRight, 1.0f, player.texture);
 
       if (IsKeyDown(KEY_D))
       {
@@ -91,9 +109,15 @@ int main(void)
         ResetActionButton(&defenseActionButton);
         ResetActionButton(&potionActionButton);
       }
-    }
 
-    EndDrawing();
+      if (player.health <= 0)
+      {
+        DrawText("SE FUDEU", 500 - MeasureText("SE FUDEU", 90) / 2, 300, 90, RED);
+        player.health = 0;
+      }
+
+      EndDrawing();
+    }
   }
 
   UnloadTexture(backgroundTexture);
@@ -102,6 +126,5 @@ int main(void)
   UnloadTexture(playerTextures[1]);
 
   CloseWindow();
-
   return 0;
 }

@@ -9,20 +9,23 @@ void CreateEnemy(Enemy *enemy, int x, int y, Texture2D texture, int numberOfFram
     enemy->texture = texture;
 }
 
-Rectangle CreateEnemyHitbox(Enemy *enemy)
+void CreateEnemyHitbox(Enemy *enemy, Rectangle *hitbox)
 {
-    Rectangle rectangle;
+    hitbox->x = enemy->x;
+    hitbox->y = enemy->y;
+    hitbox->width = enemy->texture.width / enemy->numberOfFrames;
+    hitbox->height = enemy->texture.height / enemy->numberOfFrames;
 
-    rectangle.x = enemy->x;
-    rectangle.y = enemy->y;
-    rectangle.width = enemy->texture.width / enemy->numberOfFrames;
-    rectangle.height = enemy->texture.height / enemy->numberOfFrames;
-
-    return rectangle;
+    enemy->hitbox = *hitbox;
 }
 
 void UpdateEnemyHitbox(Enemy *enemy)
 {
     enemy->hitbox.x = enemy->x;
     enemy->hitbox.y = enemy->y;
+}
+
+void DrawEnemyHitbox(Enemy enemy)
+{
+    DrawRectangleRec(enemy.hitbox, RED);
 }

@@ -12,22 +12,25 @@ void CreatePlayer(Player *player, int x, int y, Texture2D texture)
   player->health = player->maxHealth;
 }
 
-Rectangle CreatePlayerHitbox(Player *player)
+void CreatePlayerHitbox(Player *player, Rectangle *hitbox)
 {
-  Rectangle rectangle;
+  hitbox->x = player->x;
+  hitbox->y = player->y;
+  hitbox->width = player->texture.width / player->numberOfFrames;
+  hitbox->height = player->texture.height / player->numberOfFrames;
 
-  rectangle.x = player->x;
-  rectangle.y = player->y;
-  rectangle.width = player->texture.width / player->numberOfFrames;
-  rectangle.height = player->texture.height / player->numberOfFrames;
-
-  return rectangle;
+  player->hitbox = *hitbox;
 }
 
 void UpdatePlayerHitbox(Player *player)
 {
   player->hitbox.x = player->x;
   player->hitbox.y = player->y;
+}
+
+void DrawPlayerHitbox(Player player)
+{
+  DrawRectangleRec(player.hitbox, RED);
 }
 
 void DrawPlayerHealth(Player player, Texture2D healthTexture, Texture2D deathTexture)

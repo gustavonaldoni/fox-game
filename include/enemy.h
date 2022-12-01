@@ -7,5 +7,6 @@ typedef struct
 } Enemy;
 
 void CreateEnemy(Enemy *, int, int, Texture2D, int);
-Rectangle CreateEnemyHitbox(Enemy *);
+void CreateEnemyHitbox(Enemy *, Rectangle *);
 void UpdateEnemyHitbox(Enemy *);
+void DrawEnemyHitbox(Enemy);

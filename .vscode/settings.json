@@ -5,6 +5,7 @@
         "move.h": "c",
         "stopwatch.h": "c",
         "background.h": "c",
-        "actionbutton.h": "c"
+        "actionbutton.h": "c",
+        "animation.h": "c"
     }
 }
