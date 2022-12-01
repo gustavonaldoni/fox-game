@@ -61,13 +61,13 @@ int main(void)
 
     DrawPlayerHealth(player, playerHealth[0], playerHealth[1]);
     UpdatePlayerHitbox(&player);
-    //DrawPlayerHitbox(player); // ONLY activate this for debbuging
+    // DrawPlayerHitbox(player); // ONLY activate this for debbuging
 
     ActionButton actionButtons[3] = {attackActionButton, defenseActionButton, potionActionButton};
     DrawActionButtons(actionButtons, 3);
 
     UpdateEnemyHitbox(&enemy);
-    //DrawEnemyHitbox(enemy); // ONLY activate this for debbuging
+    // DrawEnemyHitbox(enemy); // ONLY activate this for debbuging
     MoveEnemy(&enemy);
     AnimateEnemyTexture(&enemy, &stopwatchEnemy, enemy.numberOfFrames, &frameEnemy, 1.0f, enemy.texture);
 
@@ -77,7 +77,7 @@ int main(void)
         enemy.x += GetScreenWidth() - 20;
       else
       {
-        enemy.x += GetScreenWidth() / 4;
+        enemy.x += 300;
         UpdatePlayerHealth(&player, -1);
       }
     }
