@@ -11,6 +11,7 @@ void CreatePlayer(Player *player, int x, int y, Texture2D texture, int numberOfF
   player->maxHealth = maxHealth;
   player->health = player->maxHealth;
   player->numberOfFrames = numberOfFrames;
+  player->isAttacking = 0;
 }
 
 void CreatePlayerHitbox(Player *player)

@@ -4,6 +4,7 @@ typedef struct
     Texture2D texture;
     int numberOfFrames;
     int health, maxHealth;
+    int isAttacking;
     Rectangle hitbox;
 } Player;
 

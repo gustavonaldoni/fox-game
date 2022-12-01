@@ -73,8 +73,14 @@ int main(void)
 
     if (CheckCollisionEnemyPlayer(enemy, player))
     {
-      enemy.x += 200;
-      UpdatePlayerHealth(&player, -1);
+      if (player.isAttacking)
+        enemy.x += GetScreenWidth() - 20;
+      else
+      {
+        enemy.x += GetScreenWidth() / 4;
+        UpdatePlayerHealth(&player, -1);
+      }
+        
     }
 
     if (IsKeyDown(KEY_A))
@@ -82,6 +88,8 @@ int main(void)
       player.texture = playerTextures[1];
       player.y = 220;
       player.numberOfFrames = 9;
+      player.isAttacking = 1;
+
       AnimatePlayerTexture(&player, &stopwatchAttack, player.numberOfFrames, &frameAttack, 1.0f, player.texture);
 
       attackActionButton.isPressed = 1;
@@ -92,6 +100,7 @@ int main(void)
       player.texture = playerTextures[0];
       player.numberOfFrames = 7;
       player.y = PLAYER_BASE_Y;
+      player.isAttacking = 0;
 
       AnimatePlayerTexture(&player, &stopwatchRight, player.numberOfFrames, &frameRight, 1.0f, player.texture);
 
