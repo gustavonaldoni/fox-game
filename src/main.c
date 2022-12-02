@@ -16,6 +16,7 @@
 int main(void)
 {
   InitWindow(1000, 600, "Fox Game");
+  InitAudioDevice();
 
   Texture2D backgroundTexture = LoadTexture("../img/rCenario.png");
   Background background;
@@ -49,12 +50,22 @@ int main(void)
   int frameAttack = 0;
   int frameEnemy = 0;
 
+  Sound slimeHitSound = LoadSound("../sounds/rSlimeHitSound.wav");
+
+  Music backgroundMusic = LoadMusicStream("../sounds/xDeviruchi - Exploring The Unknown.wav");
+  PlayMusicStream(backgroundMusic);
+
   SetTargetFPS(MAX_FPS);
 
   while (!WindowShouldClose())
   {
     BeginDrawing();
     ClearBackground(RAYWHITE);
+
+    UpdateMusicStream(backgroundMusic);
+
+    if (!IsMusicStreamPlaying(backgroundMusic))
+      PlayMusicStream(backgroundMusic);
 
     MoveBackground(&background);
     ShowBackground(background);
@@ -78,6 +89,7 @@ int main(void)
       else
       {
         enemy.x += 300;
+        PlaySound(slimeHitSound);
         UpdatePlayerHealth(&player, -1);
       }
     }
@@ -132,6 +144,11 @@ int main(void)
   UnloadActionButtonTextures(&defenseActionButton);
   UnloadActionButtonTextures(&potionActionButton);
 
+  UnloadSound(slimeHitSound);
+  UnloadMusicStream(backgroundMusic);
+
+  CloseAudioDevice();
   CloseWindow();
+
   return 0;
 }
