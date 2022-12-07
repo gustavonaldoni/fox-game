@@ -8,6 +8,7 @@ void CreateBackground(Background *background, Texture2D texture)
     background->xMovement = 0;
     background->yMovement = 0;
     background->movementStopwatch = StopwatchCreate(0.02f);
+    background->tint = RAYWHITE;
 }
 
 void ShowBackground(Background background)
@@ -28,7 +29,7 @@ void ShowBackground(Background background)
 
     origin = (Vector2){0, 0};
 
-    DrawTexturePro(background.texture, source, destination, origin, rotation, RAYWHITE);
+    DrawTexturePro(background.texture, source, destination, origin, rotation, background.tint);
 }
 
 void MoveBackground(Background *background)

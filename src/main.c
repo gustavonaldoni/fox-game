@@ -14,10 +14,18 @@
 #define MAX_FPS 144
 #define PLAYER_BASE_Y 310
 
+#define ATTACK_FREQUENCY 0.02f
+#define RIGHT_FREQUENCY 0.08f
+#define ENEMY_FREQUENCY 0.08f
+
+int pause = 0;
+
 int main(void)
 {
   InitWindow(1000, 600, "Fox Game");
   InitAudioDevice();
+
+  // Texture2D pauseTexture = LoadTexture("../img/gray.png");
 
   Texture2D backgroundTexture = LoadTexture("../img/rCenario.png");
   Background background;
@@ -43,9 +51,9 @@ int main(void)
 
   Texture2D playerHealth[2] = {LoadTexture("../img/rHealth.png"), LoadTexture("../img/rHealthDeath.png")};
 
-  Stopwatch stopwatchRight = StopwatchCreate(0.08f);
-  Stopwatch stopwatchAttack = StopwatchCreate(0.02f);
-  Stopwatch stopwatchEnemy = StopwatchCreate(0.08f);
+  Stopwatch stopwatchRight = StopwatchCreate(RIGHT_FREQUENCY);
+  Stopwatch stopwatchAttack = StopwatchCreate(ATTACK_FREQUENCY);
+  Stopwatch stopwatchEnemy = StopwatchCreate(ENEMY_FREQUENCY);
 
   int frameRight = 0;
   int frameAttack = 0;
@@ -63,78 +71,117 @@ int main(void)
     BeginDrawing();
     ClearBackground(RAYWHITE);
 
-    UpdateMusicStream(backgroundMusic);
-
-    if (!IsMusicStreamPlaying(backgroundMusic))
-      PlayMusicStream(backgroundMusic);
-
-    MoveBackground(&background);
     ShowBackground(background);
 
     DrawPlayerHealth(player, playerHealth[0], playerHealth[1]);
-    UpdatePlayerHitbox(&player);
     DrawScore(player.score);
     // DrawPlayerHitbox(player); // ONLY activate this for debbuging
 
     ActionButton actionButtons[3] = {attackActionButton, defenseActionButton, potionActionButton};
     DrawActionButtons(actionButtons, 3);
 
-    UpdateEnemyHitbox(&enemy);
     // DrawEnemyHitbox(enemy); // ONLY activate this for debbuging
-    MoveEnemy(&enemy);
-    AnimateEnemyTexture(&enemy, &stopwatchEnemy, enemy.numberOfFrames, &frameEnemy, 1.0f, enemy.texture);
 
-    if (CheckCollisionEnemyPlayer(enemy, player))
+    if (IsKeyPressed(KEY_K))
+      pause = !pause;
+
+    if (pause == 1)
     {
       if (player.isAttacking)
       {
-        enemy.x += GetScreenWidth() - 20;
-        UpdateScore(&player, 10);
-      }
+        player.texture = playerTextures[1];
+        player.y = 220;
+        player.numberOfFrames = 9;
 
+        stopwatchAttack.endSeconds += 1.0f;
+
+        AnimatePlayerTexture(&player, &stopwatchAttack, player.numberOfFrames, &frameAttack, 1.0f, player.texture);
+      }
       else
       {
-        enemy.x += 300;
-        PlaySound(slimeHitSound);
-        UpdatePlayerHealth(&player, -enemy.damage);
-        UpdateScore(&player, -1);
+        player.texture = playerTextures[0];
+        player.numberOfFrames = 7;
+        player.y = PLAYER_BASE_Y;
+
+        stopwatchRight.endSeconds += 1.0f;
+
+        AnimatePlayerTexture(&player, &stopwatchRight, player.numberOfFrames, &frameRight, 1.0f, player.texture);
       }
+
+      stopwatchEnemy.endSeconds += 1.0f;
+      AnimateEnemyTexture(&enemy, &stopwatchEnemy, enemy.numberOfFrames, &frameEnemy, 1.0f, enemy.texture);
     }
-
-    if (IsKeyDown(KEY_A))
-    {
-      player.texture = playerTextures[1];
-      player.y = 220;
-      player.numberOfFrames = 9;
-      player.isAttacking = 1;
-
-      AnimatePlayerTexture(&player, &stopwatchAttack, player.numberOfFrames, &frameAttack, 1.0f, player.texture);
-
-      attackActionButton.isPressed = 1;
-    }
-
     else
     {
-      player.texture = playerTextures[0];
-      player.numberOfFrames = 7;
-      player.y = PLAYER_BASE_Y;
-      player.isAttacking = 0;
+      stopwatchRight.endSeconds = RIGHT_FREQUENCY;
+      stopwatchAttack.endSeconds = ATTACK_FREQUENCY;
+      stopwatchEnemy.endSeconds = ENEMY_FREQUENCY;
 
-      AnimatePlayerTexture(&player, &stopwatchRight, player.numberOfFrames, &frameRight, 1.0f, player.texture);
+      UpdateMusicStream(backgroundMusic);
 
-      if (IsKeyDown(KEY_D))
+      if (!IsMusicStreamPlaying(backgroundMusic))
+        PlayMusicStream(backgroundMusic);
+
+      MoveBackground(&background);
+
+      MoveEnemy(&enemy);
+      AnimateEnemyTexture(&enemy, &stopwatchEnemy, enemy.numberOfFrames, &frameEnemy, 1.0f, enemy.texture);
+
+      UpdatePlayerHitbox(&player);
+      UpdateEnemyHitbox(&enemy);
+
+      if (CheckCollisionEnemyPlayer(enemy, player))
       {
-        defenseActionButton.isPressed = 1;
+        if (player.isAttacking)
+        {
+          enemy.x += GetScreenWidth() - 20;
+          UpdateScore(&player, 10);
+        }
+
+        else
+        {
+          enemy.x += 300;
+          PlaySound(slimeHitSound);
+          UpdatePlayerHealth(&player, -enemy.damage);
+          UpdateScore(&player, -1);
+        }
       }
-      else if (IsKeyDown(KEY_C))
+
+      if (IsKeyDown(KEY_A))
       {
-        potionActionButton.isPressed = 1;
+        player.texture = playerTextures[1];
+        player.y = 220;
+        player.numberOfFrames = 9;
+        player.isAttacking = 1;
+
+        AnimatePlayerTexture(&player, &stopwatchAttack, player.numberOfFrames, &frameAttack, 1.0f, player.texture);
+
+        attackActionButton.isPressed = 1;
       }
+
       else
       {
-        ResetActionButton(&attackActionButton);
-        ResetActionButton(&defenseActionButton);
-        ResetActionButton(&potionActionButton);
+        player.texture = playerTextures[0];
+        player.numberOfFrames = 7;
+        player.y = PLAYER_BASE_Y;
+        player.isAttacking = 0;
+
+        AnimatePlayerTexture(&player, &stopwatchRight, player.numberOfFrames, &frameRight, 1.0f, player.texture);
+
+        if (IsKeyDown(KEY_D))
+        {
+          defenseActionButton.isPressed = 1;
+        }
+        else if (IsKeyDown(KEY_C))
+        {
+          potionActionButton.isPressed = 1;
+        }
+        else
+        {
+          ResetActionButton(&attackActionButton);
+          ResetActionButton(&defenseActionButton);
+          ResetActionButton(&potionActionButton);
+        }
       }
     }
 
