@@ -10,6 +10,7 @@
 #include "background.h"
 #include "actionButton.h"
 #include "score.h"
+#include "deathScreen.h"
 
 #define MAX_FPS 144
 #define PLAYER_BASE_Y 310
@@ -25,7 +26,7 @@ int main(void)
   InitWindow(1000, 600, "Fox Game");
   InitAudioDevice();
 
-  // Texture2D pauseTexture = LoadTexture("../img/gray.png");
+  Texture2D grayTexture = LoadTexture("../img/gray.png");
 
   Texture2D backgroundTexture = LoadTexture("../img/rCenario.png");
   Background background;
@@ -110,6 +111,20 @@ int main(void)
 
       stopwatchEnemy.endSeconds += 1.0f;
       AnimateEnemyTexture(&enemy, &stopwatchEnemy, enemy.numberOfFrames, &frameEnemy, 1.0f, enemy.texture);
+
+      if (IsPlayerDead(player))
+      {
+        DrawTexture(grayTexture, 0, 0, (Color){255, 255, 255, 200});
+        DrawDeathScreenText();
+
+        if (IsKeyPressed(KEY_SPACE))
+        {
+          player.score = 0;
+          player.health = player.maxHealth;
+          enemy.x = GetScreenWidth() - enemy.texture.width / enemy.numberOfFrames;
+          pause = 0;
+        }
+      }
     }
     else
     {
@@ -129,6 +144,9 @@ int main(void)
 
       UpdatePlayerHitbox(&player);
       UpdateEnemyHitbox(&enemy);
+
+      if (IsPlayerDead(player))
+        pause = 1;
 
       if (CheckCollisionEnemyPlayer(enemy, player))
       {
