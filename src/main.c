@@ -9,6 +9,7 @@
 #include "collision.h"
 #include "background.h"
 #include "actionButton.h"
+#include "score.h"
 
 #define MAX_FPS 144
 #define PLAYER_BASE_Y 310
@@ -28,7 +29,7 @@ int main(void)
   CreatePlayerHitbox(&player);
 
   Enemy enemy;
-  CreateEnemy(&enemy, 900, 375, LoadTexture("../img/SlimeRtoL.png"), 8, 100.0f);
+  CreateEnemy(&enemy, 900, 375, LoadTexture("../img/SlimeRtoL.png"), 8, 100.0f, 1);
   CreateEnemyHitbox(&enemy);
 
   ActionButton attackActionButton;
@@ -72,6 +73,7 @@ int main(void)
 
     DrawPlayerHealth(player, playerHealth[0], playerHealth[1]);
     UpdatePlayerHitbox(&player);
+    DrawScore(player.score);
     // DrawPlayerHitbox(player); // ONLY activate this for debbuging
 
     ActionButton actionButtons[3] = {attackActionButton, defenseActionButton, potionActionButton};
@@ -85,12 +87,17 @@ int main(void)
     if (CheckCollisionEnemyPlayer(enemy, player))
     {
       if (player.isAttacking)
+      {
         enemy.x += GetScreenWidth() - 20;
+        UpdateScore(&player, 10);
+      }
+
       else
       {
         enemy.x += 300;
         PlaySound(slimeHitSound);
-        UpdatePlayerHealth(&player, -1);
+        UpdatePlayerHealth(&player, -enemy.damage);
+        UpdateScore(&player, -1);
       }
     }
 

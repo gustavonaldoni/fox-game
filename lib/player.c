@@ -12,6 +12,7 @@ void CreatePlayer(Player *player, int x, int y, Texture2D texture, int numberOfF
   player->health = player->maxHealth;
   player->numberOfFrames = numberOfFrames;
   player->isAttacking = 0;
+  player->score = 0;
 }
 
 void CreatePlayerHitbox(Player *player)
@@ -79,4 +80,9 @@ void ResetPlayerHealth(Player *player)
 void KillPlayer(Player *player)
 {
   player->health = 0;
+}
+
+int IsPlayerDead(Player player)
+{
+  return player.health == 0;
 }

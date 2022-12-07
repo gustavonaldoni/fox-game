@@ -2,13 +2,14 @@
 #include "enemy.h"
 #include "player.h"
 
-void CreateEnemy(Enemy *enemy, int x, int y, Texture2D texture, int numberOfFrames, float speed)
+void CreateEnemy(Enemy *enemy, int x, int y, Texture2D texture, int numberOfFrames, float speed, int damage)
 {
     enemy->x = x;
     enemy->y = y;
     enemy->texture = texture;
     enemy->numberOfFrames = numberOfFrames;
     enemy->speed = speed;
+    enemy->damage = damage;
 }
 
 void CreateEnemyHitbox(Enemy *enemy)

@@ -5,6 +5,7 @@ typedef struct
     int numberOfFrames;
     int health, maxHealth;
     int isAttacking;
+    int score;
     Rectangle hitbox;
 } Player;
 
@@ -16,3 +17,4 @@ void DrawPlayerHealth(Player, Texture2D, Texture2D);
 void UpdatePlayerHealth(Player *, int);
 void ResetPlayerHealth(Player *);
 void KillPlayer(Player *);
+int IsPlayerDead(Player);
