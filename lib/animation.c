@@ -2,6 +2,8 @@
 #include "stopwatch.h"
 #include "player.h"
 #include "enemy.h"
+#include "smoke.h"
+#include "animation.h"
 
 void AnimatePlayerTexture(Player *player, Stopwatch *stopwatch, int maxFrames, int *frame, float scaleFactor, Texture2D image)
 {
@@ -46,6 +48,30 @@ void AnimateEnemyTexture(Enemy *enemy, Stopwatch *stopwatch, int maxFrames, int 
     DrawTexturePro(enemy->texture,
                    (Rectangle){frameWidth * (*frame), 0, frameWidth, enemy->texture.height},
                    (Rectangle){enemy->x, enemy->y, frameWidth * scaleFactor, enemy->texture.height * scaleFactor},
+                   (Vector2){0, 0},
+                   rotation,
+                   RAYWHITE);
+}
+
+void AnimateSmokeTexture(Smoke *smoke, Stopwatch *stopwatch, int maxFrames, int *frame, float scaleFactor, Texture2D image)
+{
+    smoke->texture = image;
+    float frameWidth = smoke->texture.width / maxFrames;
+    const float rotation = 0.0f;
+
+    StopwatchUpdate(stopwatch);
+
+    if (StopwatchIsDone(*stopwatch))
+    {
+        StopwatchReset(stopwatch);
+        *frame += 1;
+    }
+
+    *frame = *frame % maxFrames;
+
+    DrawTexturePro(smoke->texture,
+                   (Rectangle){frameWidth * (*frame), 0, frameWidth, smoke->texture.height},
+                   (Rectangle){smoke->x, smoke->y, frameWidth * scaleFactor, smoke->texture.height * scaleFactor},
                    (Vector2){0, 0},
                    rotation,
                    RAYWHITE);

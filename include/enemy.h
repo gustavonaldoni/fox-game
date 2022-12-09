@@ -5,6 +5,7 @@ typedef struct
     int numberOfFrames;
     float speed;
     int damage;
+    int isAttacking;
     Rectangle hitbox;
 } Enemy;
 

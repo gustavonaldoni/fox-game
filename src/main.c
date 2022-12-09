@@ -1,10 +1,14 @@
 // cc src/main.c -o build/a.out lib/*.c -lraylib -lGL -lm -lpthread -ldl -lrt -lX11 -Wall -Werror -I./include
 
+#include <stdlib.h>
+#include <time.h>
+
 #include "raylib.h"
 #include "raymath.h"
 #include "player.h"
 #include "stopwatch.h"
 #include "enemy.h"
+#include "smoke.h"
 #include "animation.h"
 #include "collision.h"
 #include "background.h"
@@ -14,15 +18,23 @@
 
 #define MAX_FPS 144
 #define PLAYER_BASE_Y 310
+#define PLAYER_BASE_Y_ATTACK 220
 
 #define ATTACK_FREQUENCY 0.02f
 #define RIGHT_FREQUENCY 0.08f
 #define ENEMY_FREQUENCY 0.08f
+#define SMOKE_FREQUENCY 0.08f
 
 int pause = 0;
+int checkedCollision = 0;
+
+int variavelTesteParaMudarCorDoSlime = 0;
 
 int main(void)
 {
+
+  srand(time(NULL));
+
   InitWindow(1000, 600, "Fox Game");
   InitAudioDevice();
 
@@ -33,13 +45,18 @@ int main(void)
   CreateBackground(&background, backgroundTexture);
 
   Player player;
-  Texture2D playerTextures[2] = {LoadTexture("../img/rDireita.png"), LoadTexture("../img/rAtaque.png")};
+  Texture2D playerTextures[5] = {LoadTexture("../img/rDireita.png"), LoadTexture("../img/rAtaque.png"), LoadTexture("../img/foxHit.png"), LoadTexture("../img/foxDie.png"), LoadTexture("../img/foxBreathing.png")};
   CreatePlayer(&player, 100, PLAYER_BASE_Y, playerTextures[0], 7);
   CreatePlayerHitbox(&player);
 
+  Texture2D enemyTextures[3] = {LoadTexture("../img/SlimeRtoL_Green.png"), LoadTexture("../img/SlimeRtoL_Red.png"), LoadTexture("../img/SlimeRtoL_Blue.png")};
   Enemy enemy;
-  CreateEnemy(&enemy, 900, 375, LoadTexture("../img/SlimeRtoL.png"), 8, 100.0f, 1);
+  CreateEnemy(&enemy, GetScreenWidth() + 400, 375, enemyTextures[0], 8, 100.0f, 1);
   CreateEnemyHitbox(&enemy);
+
+  Smoke smoke;
+  Texture2D smokeTexture = LoadTexture("../img/SlimeSmoke.png");
+  CreateSmoke(&smoke, &enemy, smokeTexture, 7);
 
   ActionButton attackActionButton;
   CreateActionButton(&attackActionButton, 0, 0, LoadTexture("../img/rAttackButton.png"), LoadTexture("../img/rPressedAttackButton.png"));
@@ -55,10 +72,12 @@ int main(void)
   Stopwatch stopwatchRight = StopwatchCreate(RIGHT_FREQUENCY);
   Stopwatch stopwatchAttack = StopwatchCreate(ATTACK_FREQUENCY);
   Stopwatch stopwatchEnemy = StopwatchCreate(ENEMY_FREQUENCY);
+  Stopwatch stopwatchSmoke = StopwatchCreate(SMOKE_FREQUENCY);
 
   int frameRight = 0;
   int frameAttack = 0;
   int frameEnemy = 0;
+  int frameSmoke = 0;
 
   Sound slimeHitSound = LoadSound("../sounds/rSlimeHitSound.wav");
 
@@ -93,9 +112,7 @@ int main(void)
         player.texture = playerTextures[1];
         player.y = 220;
         player.numberOfFrames = 9;
-
         stopwatchAttack.endSeconds += 1.0f;
-
         AnimatePlayerTexture(&player, &stopwatchAttack, player.numberOfFrames, &frameAttack, 1.0f, player.texture);
       }
       else
@@ -103,10 +120,16 @@ int main(void)
         player.texture = playerTextures[0];
         player.numberOfFrames = 7;
         player.y = PLAYER_BASE_Y;
-
         stopwatchRight.endSeconds += 1.0f;
 
-        AnimatePlayerTexture(&player, &stopwatchRight, player.numberOfFrames, &frameRight, 1.0f, player.texture);
+        if (IsPlayerDead(player))
+        {
+          player.numberOfFrames = 1;
+          player.texture = playerTextures[3];
+          AnimatePlayerTexture(&player, &stopwatchRight, player.numberOfFrames, &frameRight, 1.0f, player.texture);
+        }
+        else
+          AnimatePlayerTexture(&player, &stopwatchRight, player.numberOfFrames, &frameRight, 1.0f, player.texture);
       }
 
       stopwatchEnemy.endSeconds += 1.0f;
@@ -126,6 +149,7 @@ int main(void)
         }
       }
     }
+
     else
     {
       stopwatchRight.endSeconds = RIGHT_FREQUENCY;
@@ -137,10 +161,28 @@ int main(void)
       if (!IsMusicStreamPlaying(backgroundMusic))
         PlayMusicStream(backgroundMusic);
 
-      MoveBackground(&background);
+      if (enemy.isAttacking == 1 && enemy.x < 400)
+      {
+        enemy.x += 10;
+        enemy.y -= 1;
+        enemy.speed = 100.0f;
+      }
+      else
+      {
+        enemy.isAttacking = 0;
+        if (enemy.x < 300)
+        {
+          enemy.speed = 450.0f;
+          enemy.y -= 2;
+        }
+      }
+
+      if (enemy.y != 375)
+        enemy.y += 1;
 
       MoveEnemy(&enemy);
       AnimateEnemyTexture(&enemy, &stopwatchEnemy, enemy.numberOfFrames, &frameEnemy, 1.0f, enemy.texture);
+      enemy.speed = 100.0f;
 
       UpdatePlayerHitbox(&player);
       UpdateEnemyHitbox(&enemy);
@@ -152,39 +194,70 @@ int main(void)
       {
         if (player.isAttacking)
         {
-          enemy.x += GetScreenWidth() - 20;
           UpdateScore(&player, 10);
-        }
+          checkedCollision = 1;
+          MoveSmoke(&smoke, &enemy);
+          enemy.x += GetScreenWidth() + 400;
 
+          variavelTesteParaMudarCorDoSlime = rand() % 3;
+          enemy.texture = enemyTextures[variavelTesteParaMudarCorDoSlime];
+        }
         else
         {
-          enemy.x += 300;
+          enemy.isAttacking = 1;
           PlaySound(slimeHitSound);
           UpdatePlayerHealth(&player, -enemy.damage);
           UpdateScore(&player, -1);
         }
       }
 
+      if (checkedCollision == 1 || checkedCollision == 2)
+      {
+        AnimateSmokeTexture(&smoke, &stopwatchSmoke, smoke.numberOfFrames, &frameSmoke, 0.1f, smoke.texture);
+
+        if (enemy.x < GetScreenWidth() + 660 && checkedCollision == 2)
+          checkedCollision = 0;
+
+        if (checkedCollision != 0)
+          checkedCollision = 2;
+      }
+
       if (IsKeyDown(KEY_A))
       {
         player.texture = playerTextures[1];
-        player.y = 220;
+        player.y = PLAYER_BASE_Y_ATTACK;
         player.numberOfFrames = 9;
         player.isAttacking = 1;
 
         AnimatePlayerTexture(&player, &stopwatchAttack, player.numberOfFrames, &frameAttack, 1.0f, player.texture);
-
         attackActionButton.isPressed = 1;
       }
 
       else
       {
-        player.texture = playerTextures[0];
-        player.numberOfFrames = 7;
+
         player.y = PLAYER_BASE_Y;
         player.isAttacking = 0;
 
-        AnimatePlayerTexture(&player, &stopwatchRight, player.numberOfFrames, &frameRight, 1.0f, player.texture);
+        if (enemy.isAttacking == 0 && enemy.x > GetScreenWidth())
+        {
+          player.texture = playerTextures[0];
+          player.numberOfFrames = 7;
+          AnimatePlayerTexture(&player, &stopwatchRight, player.numberOfFrames, &frameRight, 1.0f, player.texture);
+          MoveBackground(&background);
+        }
+
+        else if (enemy.isAttacking == 0 && enemy.x < GetScreenWidth())
+        {
+          player.texture = playerTextures[4];
+          player.numberOfFrames = 8;
+          AnimatePlayerTexture(&player, &stopwatchRight, player.numberOfFrames, &frameRight, 1.0f, player.texture);
+        }
+        else
+        {
+          player.texture = playerTextures[2];
+          AnimatePlayerTexture(&player, &stopwatchAttack, 1, &frameAttack, 1.0f, player.texture);
+        }
 
         if (IsKeyDown(KEY_D))
         {
@@ -210,6 +283,9 @@ int main(void)
   UnloadTexture(background.texture);
   UnloadTexture(playerTextures[0]);
   UnloadTexture(playerTextures[1]);
+  UnloadTexture(playerTextures[2]);
+  UnloadTexture(playerTextures[3]);
+  UnloadTexture(playerTextures[4]);
   UnloadTexture(player.texture);
 
   UnloadActionButtonTextures(&attackActionButton);

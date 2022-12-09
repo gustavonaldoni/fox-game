@@ -10,6 +10,7 @@ void CreateEnemy(Enemy *enemy, int x, int y, Texture2D texture, int numberOfFram
     enemy->numberOfFrames = numberOfFrames;
     enemy->speed = speed;
     enemy->damage = damage;
+    enemy->isAttacking = 0;
 }
 
 void CreateEnemyHitbox(Enemy *enemy)
