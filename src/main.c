@@ -15,6 +15,7 @@
 #include "actionButton.h"
 #include "score.h"
 #include "deathScreen.h"
+#include "list.h"
 
 #define MAX_FPS 144
 #define PLAYER_BASE_Y 310
@@ -32,11 +33,13 @@ int variavelTesteParaMudarCorDoSlime = 0;
 
 int main(void)
 {
-
   srand(time(NULL));
 
   InitWindow(1000, 600, "Fox Game");
   InitAudioDevice();
+
+  ListLSE enemyList;
+  ListLSECreate(&enemyList);
 
   Texture2D grayTexture = LoadTexture("../img/gray.png");
 
@@ -51,7 +54,7 @@ int main(void)
 
   Texture2D enemyTextures[3] = {LoadTexture("../img/SlimeRtoL_Green.png"), LoadTexture("../img/SlimeRtoL_Red.png"), LoadTexture("../img/SlimeRtoL_Blue.png")};
   Enemy enemy;
-  CreateEnemy(&enemy, GetScreenWidth() + 400, 375, enemyTextures[0], 8, 100.0f, 1);
+  CreateEnemy(&enemy, GetScreenWidth() + 400, 375, enemyTextures[0], 8, 100.0f, 1, 1);
   CreateEnemyHitbox(&enemy);
 
   Smoke smoke;

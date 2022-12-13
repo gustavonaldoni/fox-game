@@ -1,9 +1,9 @@
 #include "raylib.h"
 #include "enemy.h"
-#include "player.h"
 
-void CreateEnemy(Enemy *enemy, int x, int y, Texture2D texture, int numberOfFrames, float speed, int damage)
+void CreateEnemy(Enemy *enemy, int x, int y, Texture2D texture, int numberOfFrames, float speed, int damage, int id)
 {
+    enemy->id = id;
     enemy->x = x;
     enemy->y = y;
     enemy->texture = texture;
