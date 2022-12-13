@@ -32,7 +32,7 @@ void DrawActionButtons(ActionButton actionButtons[], int numberOfButtons)
 
   borderSpace = 20;
   betweenButtonsSpace = 20;
-  scaleFactor = 1.2f;
+  scaleFactor = 0.15f;
 
   x = borderSpace;
   y = GetScreenHeight() - (actionButtons[0].normalTexture.height * scaleFactor + borderSpace);

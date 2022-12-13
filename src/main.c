@@ -76,13 +76,13 @@ int main(void)
   CreateSmoke(&smoke, firstEnemy, smokeTexture, 7);
 
   ActionButton attackActionButton;
-  CreateActionButton(&attackActionButton, 0, 0, LoadTexture("../img/rAttackButton.png"), LoadTexture("../img/rPressedAttackButton.png"));
+  CreateActionButton(&attackActionButton, 0, 0, LoadTexture("../img/botaoEspada.png"), LoadTexture("../img/rPressedAttackButton.png"));
 
   ActionButton defenseActionButton;
-  CreateActionButton(&defenseActionButton, 0, 0, LoadTexture("../img/rDefenseButton.png"), LoadTexture("../img/rPressedDefenseButton.png"));
+  CreateActionButton(&defenseActionButton, 0, 0, LoadTexture("../img/botaoEscudo.png"), LoadTexture("../img/rPressedDefenseButton.png"));
 
   ActionButton potionActionButton;
-  CreateActionButton(&potionActionButton, 0, 0, LoadTexture("../img/rPotionButton.png"), LoadTexture("../img/rPressedPotionButton.png"));
+  CreateActionButton(&potionActionButton, 0, 0, LoadTexture("../img/botaoPocao.png"), LoadTexture("../img/rPressedPotionButton.png"));
 
   Texture2D playerHealth[2] = {LoadTexture("../img/rHealth.png"), LoadTexture("../img/rHealthDeath.png")};
 
