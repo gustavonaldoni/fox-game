@@ -140,5 +140,25 @@ Enemy *ListLSEInit(ListLSE list)
     if (!ListLSEIsEmpty(list))
         return &(list.init->enemy);
 
-    exit(1);
+    return NULL;
+}
+
+void InsertRandomEnemies(ListLSE *enemiesList, int numberOfEnemies, Enemy greenSlime, Enemy blueSlime, Enemy redSlime)
+{
+    int i, n;
+    Enemy randomEnemy;
+
+    for (i = 0; i < numberOfEnemies; i++)
+    {
+        n = rand() % 3;
+
+        if (n == 0)
+            randomEnemy = greenSlime;
+        if (n == 1)
+            randomEnemy = blueSlime;
+        if (n == 2)
+            randomEnemy = redSlime;
+
+        ListLSEInsertEnd(enemiesList, randomEnemy);
+    }
 }

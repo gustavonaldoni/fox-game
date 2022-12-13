@@ -29,8 +29,6 @@
 int pause = 0;
 int checkedCollision = 0;
 
-int variavelTesteParaMudarCorDoSlime = 0;
-
 int main(void)
 {
   srand(time(NULL));
@@ -53,18 +51,29 @@ int main(void)
   CreatePlayerHitbox(&player);
 
   Texture2D enemyTextures[3] = {LoadTexture("../img/SlimeRtoL_Green.png"), LoadTexture("../img/SlimeRtoL_Red.png"), LoadTexture("../img/SlimeRtoL_Blue.png")};
-  Enemy enemy;
-  CreateEnemy(&enemy, GetScreenWidth() + 400, 375, enemyTextures[0], 8, 100.0f, 1, 1);
-  CreateEnemyHitbox(&enemy);
 
-  ListLSEInsertEnd(&enemyList, enemy);
+  Enemy greenSlime;
+  CreateEnemy(&greenSlime, GetScreenWidth() + 400, 375, enemyTextures[0], 8, 100.0f, 1, 1, 1.0f);
+  CreateEnemyHitbox(&greenSlime);
+
+  Enemy blueSlime;
+  CreateEnemy(&blueSlime, GetScreenWidth() + 400, 375, enemyTextures[2], 8, 250.0f, 1, 2, 1.0f);
+  CreateEnemyHitbox(&blueSlime);
+
+  Enemy redSlime;
+  CreateEnemy(&redSlime, GetScreenWidth() + 400, 340, enemyTextures[1], 8, 80.0f, 2, 3, 1.5f);
+  CreateEnemyHitbox(&redSlime);
+
+  ListLSEInsertEnd(&enemyList, redSlime);
+  ListLSEInsertEnd(&enemyList, greenSlime);
+  InsertRandomEnemies(&enemyList, 5, greenSlime, blueSlime, redSlime);
 
   Enemy *firstEnemy;
   firstEnemy = ListLSEInit(enemyList);
 
   Smoke smoke;
   Texture2D smokeTexture = LoadTexture("../img/SlimeSmoke.png");
-  CreateSmoke(&smoke, &enemy, smokeTexture, 7);
+  CreateSmoke(&smoke, firstEnemy, smokeTexture, 7);
 
   ActionButton attackActionButton;
   CreateActionButton(&attackActionButton, 0, 0, LoadTexture("../img/rAttackButton.png"), LoadTexture("../img/rPressedAttackButton.png"));
@@ -98,6 +107,13 @@ int main(void)
   {
     BeginDrawing();
     ClearBackground(RAYWHITE);
+
+    if (ListLSEIsEmpty(enemyList))
+    {
+
+    }
+    else
+      firstEnemy = ListLSEInit(enemyList);
 
     ShowBackground(background);
 
@@ -141,7 +157,7 @@ int main(void)
       }
 
       stopwatchEnemy.endSeconds += 1.0f;
-      AnimateEnemyTexture(firstEnemy, &stopwatchEnemy, firstEnemy->numberOfFrames, &frameEnemy, 1.0f, firstEnemy->texture);
+      AnimateEnemyTexture(firstEnemy, &stopwatchEnemy, firstEnemy->numberOfFrames, &frameEnemy, firstEnemy->size, firstEnemy->texture);
 
       if (IsPlayerDead(player))
       {
@@ -173,24 +189,24 @@ int main(void)
       {
         firstEnemy->x += 10;
         firstEnemy->y -= 1;
-        firstEnemy->speed = 100.0f;
+        firstEnemy->currentSpeed = firstEnemy->baseSpeed;
       }
       else
       {
         firstEnemy->isAttacking = 0;
         if (firstEnemy->x < 300)
         {
-          firstEnemy->speed = 450.0f;
+          firstEnemy->currentSpeed = 450.0f;
           firstEnemy->y -= 2;
         }
       }
 
-      if (firstEnemy->y != 375)
+      if (firstEnemy->y != firstEnemy->baseY)
         firstEnemy->y += 1;
 
       MoveEnemy(firstEnemy);
-      AnimateEnemyTexture(firstEnemy, &stopwatchEnemy, firstEnemy->numberOfFrames, &frameEnemy, 1.0f, firstEnemy->texture);
-      firstEnemy->speed = 100.0f;
+      AnimateEnemyTexture(firstEnemy, &stopwatchEnemy, firstEnemy->numberOfFrames, &frameEnemy, firstEnemy->size, firstEnemy->texture);
+      firstEnemy->currentSpeed = firstEnemy->baseSpeed;
 
       UpdatePlayerHitbox(&player);
       UpdateEnemyHitbox(firstEnemy);
@@ -205,10 +221,8 @@ int main(void)
           UpdateScore(&player, 10);
           checkedCollision = 1;
           MoveSmoke(&smoke, firstEnemy);
-          firstEnemy->x += GetScreenWidth() + 400;
 
-          variavelTesteParaMudarCorDoSlime = rand() % 3;
-          firstEnemy->texture = enemyTextures[variavelTesteParaMudarCorDoSlime];
+          ListLSERemove(&enemyList, *firstEnemy);
         }
         else
         {

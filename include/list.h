@@ -20,3 +20,4 @@ int ListLSECountElements(ListLSE);
 int ListLSERemove(ListLSE *list, Enemy);
 
 Enemy *ListLSEInit(ListLSE);
+void InsertRandomEnemies(ListLSE *, int, Enemy, Enemy, Enemy);

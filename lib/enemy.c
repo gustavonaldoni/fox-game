@@ -1,15 +1,18 @@
 #include "raylib.h"
 #include "enemy.h"
 
-void CreateEnemy(Enemy *enemy, int x, int y, Texture2D texture, int numberOfFrames, float speed, int damage, int id)
+void CreateEnemy(Enemy *enemy, int x, int y, Texture2D texture, int numberOfFrames, float speed, int damage, int id, float size)
 {
     enemy->id = id;
     enemy->x = x;
     enemy->y = y;
+    enemy->baseY = enemy->y;
     enemy->texture = texture;
     enemy->numberOfFrames = numberOfFrames;
-    enemy->speed = speed;
+    enemy->baseSpeed = speed;
+    enemy->currentSpeed = enemy->baseSpeed;
     enemy->damage = damage;
+    enemy->size = size;
     enemy->isAttacking = 0;
 }
 
@@ -40,5 +43,5 @@ void DrawEnemyHitbox(Enemy enemy)
 
 void MoveEnemy(Enemy *enemy)
 {
-    enemy->x -= enemy->speed * GetFrameTime();
+    enemy->x -= enemy->currentSpeed * GetFrameTime();
 }
