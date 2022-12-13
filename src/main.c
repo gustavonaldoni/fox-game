@@ -57,6 +57,11 @@ int main(void)
   CreateEnemy(&enemy, GetScreenWidth() + 400, 375, enemyTextures[0], 8, 100.0f, 1, 1);
   CreateEnemyHitbox(&enemy);
 
+  ListLSEInsertEnd(&enemyList, enemy);
+
+  Enemy *firstEnemy;
+  firstEnemy = ListLSEInit(enemyList);
+
   Smoke smoke;
   Texture2D smokeTexture = LoadTexture("../img/SlimeSmoke.png");
   CreateSmoke(&smoke, &enemy, smokeTexture, 7);
@@ -136,7 +141,7 @@ int main(void)
       }
 
       stopwatchEnemy.endSeconds += 1.0f;
-      AnimateEnemyTexture(&enemy, &stopwatchEnemy, enemy.numberOfFrames, &frameEnemy, 1.0f, enemy.texture);
+      AnimateEnemyTexture(firstEnemy, &stopwatchEnemy, firstEnemy->numberOfFrames, &frameEnemy, 1.0f, firstEnemy->texture);
 
       if (IsPlayerDead(player))
       {
@@ -147,7 +152,7 @@ int main(void)
         {
           player.score = 0;
           player.health = player.maxHealth;
-          enemy.x = GetScreenWidth() - enemy.texture.width / enemy.numberOfFrames;
+          firstEnemy->x = GetScreenWidth() - firstEnemy->texture.width / firstEnemy->numberOfFrames;
           pause = 0;
         }
       }
@@ -164,52 +169,52 @@ int main(void)
       if (!IsMusicStreamPlaying(backgroundMusic))
         PlayMusicStream(backgroundMusic);
 
-      if (enemy.isAttacking == 1 && enemy.x < 400)
+      if (firstEnemy->isAttacking == 1 && firstEnemy->x < 400)
       {
-        enemy.x += 10;
-        enemy.y -= 1;
-        enemy.speed = 100.0f;
+        firstEnemy->x += 10;
+        firstEnemy->y -= 1;
+        firstEnemy->speed = 100.0f;
       }
       else
       {
-        enemy.isAttacking = 0;
-        if (enemy.x < 300)
+        firstEnemy->isAttacking = 0;
+        if (firstEnemy->x < 300)
         {
-          enemy.speed = 450.0f;
-          enemy.y -= 2;
+          firstEnemy->speed = 450.0f;
+          firstEnemy->y -= 2;
         }
       }
 
-      if (enemy.y != 375)
-        enemy.y += 1;
+      if (firstEnemy->y != 375)
+        firstEnemy->y += 1;
 
-      MoveEnemy(&enemy);
-      AnimateEnemyTexture(&enemy, &stopwatchEnemy, enemy.numberOfFrames, &frameEnemy, 1.0f, enemy.texture);
-      enemy.speed = 100.0f;
+      MoveEnemy(firstEnemy);
+      AnimateEnemyTexture(firstEnemy, &stopwatchEnemy, firstEnemy->numberOfFrames, &frameEnemy, 1.0f, firstEnemy->texture);
+      firstEnemy->speed = 100.0f;
 
       UpdatePlayerHitbox(&player);
-      UpdateEnemyHitbox(&enemy);
+      UpdateEnemyHitbox(firstEnemy);
 
       if (IsPlayerDead(player))
         pause = 1;
 
-      if (CheckCollisionEnemyPlayer(enemy, player))
+      if (CheckCollisionEnemyPlayer(*firstEnemy, player))
       {
         if (player.isAttacking)
         {
           UpdateScore(&player, 10);
           checkedCollision = 1;
-          MoveSmoke(&smoke, &enemy);
-          enemy.x += GetScreenWidth() + 400;
+          MoveSmoke(&smoke, firstEnemy);
+          firstEnemy->x += GetScreenWidth() + 400;
 
           variavelTesteParaMudarCorDoSlime = rand() % 3;
-          enemy.texture = enemyTextures[variavelTesteParaMudarCorDoSlime];
+          firstEnemy->texture = enemyTextures[variavelTesteParaMudarCorDoSlime];
         }
         else
         {
-          enemy.isAttacking = 1;
+          firstEnemy->isAttacking = 1;
           PlaySound(slimeHitSound);
-          UpdatePlayerHealth(&player, -enemy.damage);
+          UpdatePlayerHealth(&player, -firstEnemy->damage);
           UpdateScore(&player, -1);
         }
       }
@@ -218,7 +223,7 @@ int main(void)
       {
         AnimateSmokeTexture(&smoke, &stopwatchSmoke, smoke.numberOfFrames, &frameSmoke, 0.1f, smoke.texture);
 
-        if (enemy.x < GetScreenWidth() + 660 && checkedCollision == 2)
+        if (firstEnemy->x < GetScreenWidth() + 660 && checkedCollision == 2)
           checkedCollision = 0;
 
         if (checkedCollision != 0)
@@ -238,11 +243,10 @@ int main(void)
 
       else
       {
-
         player.y = PLAYER_BASE_Y;
         player.isAttacking = 0;
 
-        if (enemy.isAttacking == 0 && enemy.x > GetScreenWidth())
+        if (firstEnemy->isAttacking == 0 && firstEnemy->x > GetScreenWidth())
         {
           player.texture = playerTextures[0];
           player.numberOfFrames = 7;
@@ -250,7 +254,7 @@ int main(void)
           MoveBackground(&background);
         }
 
-        else if (enemy.isAttacking == 0 && enemy.x < GetScreenWidth())
+        else if (firstEnemy->isAttacking == 0 && firstEnemy->x < GetScreenWidth())
         {
           player.texture = playerTextures[4];
           player.numberOfFrames = 8;

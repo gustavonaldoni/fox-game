@@ -18,3 +18,5 @@ bool ListLSEInsertEnd(ListLSE *, Enemy);
 int ListLSECountElements(ListLSE);
 
 int ListLSERemove(ListLSE *list, Enemy);
+
+Enemy *ListLSEInit(ListLSE);

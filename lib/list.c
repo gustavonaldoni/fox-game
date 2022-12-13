@@ -134,3 +134,11 @@ int ListLSERemove(ListLSE *list, Enemy enemy)
         return 1;
     }
 }
+
+Enemy *ListLSEInit(ListLSE list)
+{
+    if (!ListLSEIsEmpty(list))
+        return &(list.init->enemy);
+
+    exit(1);
+}
