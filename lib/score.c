@@ -9,13 +9,14 @@ void UpdateScore(Player *player, int scoreToAdd)
 
 void DrawScore(int score)
 {
-    int borderSpace;
+    int borderSpace, shadowSpace;
     int xText, yText;
     int textWidth;
     const char *text;
     int fontSize;
 
     borderSpace = 10;
+    shadowSpace = 3;
     fontSize = 40;
 
     text = TextFormat("%d", score);
@@ -24,5 +25,6 @@ void DrawScore(int score)
     yText = borderSpace;
     xText = GetScreenWidth() - borderSpace - textWidth;
 
+    DrawText(text, xText + shadowSpace, yText + shadowSpace, fontSize, DARKGRAY);
     DrawText(text, xText, yText, fontSize, RAYWHITE);
 }

@@ -18,6 +18,7 @@ bool ListLSEInsertEnd(ListLSE *, Enemy);
 int ListLSECountElements(ListLSE);
 
 int ListLSERemove(ListLSE *list, Enemy);
+int ListLSERemoveAll(ListLSE *);
 
 Enemy *ListLSEInit(ListLSE);
 void InsertRandomEnemies(ListLSE *, int, Enemy, Enemy, Enemy);

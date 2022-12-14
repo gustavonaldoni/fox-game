@@ -135,6 +135,24 @@ int ListLSERemove(ListLSE *list, Enemy enemy)
     }
 }
 
+int ListLSERemoveAll(ListLSE *list)
+{
+    struct Node *aux;
+
+    if (ListLSEIsEmpty(*list))
+        return 0;
+
+    aux = list->init;
+
+    while (aux != NULL)
+    {
+        ListLSERemove(list, aux->enemy);
+        aux = aux->next;
+    }
+
+    return 1;
+}
+
 Enemy *ListLSEInit(ListLSE list)
 {
     if (!ListLSEIsEmpty(list))

@@ -45,6 +45,8 @@ Matheus Evangelista
 
 #define ENEMY_APARISON_CONSTANT 400
 
+#define FIRST_ROUND_ENEMIES 5
+
 int pause = 0;
 int checkedCollision = 0;
 int numberOfRounds = 1;
@@ -87,7 +89,7 @@ int main(void)
   CreateEnemyHitbox(&redSlime);
 
   // Inserção de inimigos aleatórios na lista
-  InsertRandomEnemies(&enemyList, 5, greenSlime, blueSlime, redSlime);
+  InsertRandomEnemies(&enemyList, FIRST_ROUND_ENEMIES, greenSlime, blueSlime, redSlime);
 
   Enemy *firstEnemy;
   firstEnemy = ListLSEInit(enemyList);
@@ -137,7 +139,7 @@ int main(void)
 
     if (ListLSEIsEmpty(enemyList))
     {
-      InsertRandomEnemies(&enemyList, 5 + numberOfRounds, greenSlime, blueSlime, redSlime);
+      InsertRandomEnemies(&enemyList, FIRST_ROUND_ENEMIES - 1 + numberOfRounds, greenSlime, blueSlime, redSlime);
       numberOfRounds++;
     }
     else
@@ -204,6 +206,10 @@ int main(void)
 
       if (IsPlayerDead(player))
       {
+        ListLSERemoveAll(&enemyList);
+        InsertRandomEnemies(&enemyList, FIRST_ROUND_ENEMIES, greenSlime, blueSlime, redSlime);
+        numberOfRounds = 1;
+
         DrawTexture(grayTexture, 0, 0, (Color){255, 255, 255, 200});
         DrawDeathScreenText();
 
