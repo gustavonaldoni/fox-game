@@ -74,7 +74,7 @@ int main(void)
   CreateEnemyHitbox(&redSlime);
 
   // Inserção de inimigos aleatórios na lista
-  InsertRandomEnemies(&enemyList, 5, greenSlime, blueSlime, redSlime);
+  InsertRandomEnemies(&enemyList, 3, greenSlime, blueSlime, redSlime);
 
   Enemy *firstEnemy;
   firstEnemy = ListLSEInit(enemyList);
