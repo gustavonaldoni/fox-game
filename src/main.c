@@ -296,22 +296,21 @@ int main(void)
           checkedCollision = 2;
       }
 
-      if (IsKeyPressed(KEY_A))
+      if (attackCounter == 0)
       {
-        attackAux = 1.9f;
+        if (IsKeyPressed(KEY_A))
+          attackAux = 2.9f;
       }
 
-      if (attackCounter == 1)
+      if (attackCounter <= 2)
+        attackAux -= 2.0f * GetFrameTime();
+
+      if (attackCounter == 2)
       {
         player.texture = playerTextures[1];
         player.y = PLAYER_BASE_Y_ATTACK;
         player.numberOfFrames = 9;
         player.isAttacking = 1;
-
-        attackAux -= 0.04f;
-
-        if (attackAux <= 0.0f)
-          attackAux = 0.0f;
 
         AnimatePlayerTexture(&player, &stopwatchAttack, player.numberOfFrames, &frameAttack, 1.0f, player.texture);
         attackActionButton.isPressed = 1;
