@@ -1,5 +1,16 @@
 // cc src/main.c -o build/a.out lib/*.c -lraylib -lGL -lm -lpthread -ldl -lrt -lX11 -Wall -Werror -I./include
 
+/*
+Integrantes:
+
+Gustavo Naldoni
+André Devecz
+André Zappa
+Rafael Leite
+Daniel Pontes
+Matheus Evangelista
+*/
+
 // Inclusão das bibliotecas necessárias
 #include <stdlib.h>
 #include <time.h>
@@ -18,6 +29,7 @@
 #include "deathScreen.h"
 #include "list.h"
 #include "volumeButton.h"
+#include "numberOfRounds.h"
 
 #define MAX_FPS 144
 #define PLAYER_BASE_Y 310
@@ -35,6 +47,7 @@
 
 int pause = 0;
 int checkedCollision = 0;
+int numberOfRounds = 1;
 
 int main(void)
 {
@@ -74,7 +87,7 @@ int main(void)
   CreateEnemyHitbox(&redSlime);
 
   // Inserção de inimigos aleatórios na lista
-  InsertRandomEnemies(&enemyList, 3, greenSlime, blueSlime, redSlime);
+  InsertRandomEnemies(&enemyList, 5, greenSlime, blueSlime, redSlime);
 
   Enemy *firstEnemy;
   firstEnemy = ListLSEInit(enemyList);
@@ -124,6 +137,8 @@ int main(void)
 
     if (ListLSEIsEmpty(enemyList))
     {
+      InsertRandomEnemies(&enemyList, 5 + numberOfRounds, greenSlime, blueSlime, redSlime);
+      numberOfRounds++;
     }
     else
       firstEnemy = ListLSEInit(enemyList);
@@ -152,6 +167,8 @@ int main(void)
     DrawActionButtons(actionButtons, 3);
 
     DrawVolumeButton(volumeButton);
+
+    DrawRoundNumber(numberOfRounds);
 
     // DrawEnemyHitbox(enemy); // ONLY activate this for debbuging
 
