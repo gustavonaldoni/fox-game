@@ -1,5 +1,6 @@
 // cc src/main.c -o build/a.out lib/*.c -lraylib -lGL -lm -lpthread -ldl -lrt -lX11 -Wall -Werror -I./include
 
+// Inclusão das bibliotecas necessárias
 #include <stdlib.h>
 #include <time.h>
 
@@ -25,10 +26,12 @@
 #define ATTACK_FREQUENCY 0.02f
 #define RIGHT_FREQUENCY 0.08f
 #define ENEMY_FREQUENCY 0.08f
-#define SMOKE_FREQUENCY 0.08f
+#define SMOKE_FREQUENCY 0.2f
 
 #define MAX_VOLUME 1.0f
 #define MIN_VOLUME 0.0f
+
+#define ENEMY_APARISON_CONSTANT 400
 
 int pause = 0;
 int checkedCollision = 0;
@@ -40,6 +43,7 @@ int main(void)
   InitWindow(1000, 600, "Fox Game");
   InitAudioDevice();
 
+  // Criar lista dos inimigos
   ListLSE enemyList;
   ListLSECreate(&enemyList);
 
@@ -56,27 +60,30 @@ int main(void)
 
   Texture2D enemyTextures[3] = {LoadTexture("../img/SlimeRtoL_Green.png"), LoadTexture("../img/SlimeRtoL_Red.png"), LoadTexture("../img/SlimeRtoL_Blue.png")};
 
+  // Criação dos inimigos
   Enemy greenSlime;
-  CreateEnemy(&greenSlime, GetScreenWidth() + 400, 375, enemyTextures[0], 8, 100.0f, 1, 1, 1.0f);
+  CreateEnemy(&greenSlime, GetScreenWidth() + ENEMY_APARISON_CONSTANT, 375, enemyTextures[0], 8, 100.0f, 1, 1, 1.0f);
   CreateEnemyHitbox(&greenSlime);
 
   Enemy blueSlime;
-  CreateEnemy(&blueSlime, GetScreenWidth() + 400, 375, enemyTextures[2], 8, 250.0f, 1, 2, 1.0f);
+  CreateEnemy(&blueSlime, GetScreenWidth() + ENEMY_APARISON_CONSTANT, 375, enemyTextures[2], 8, 250.0f, 1, 2, 1.0f);
   CreateEnemyHitbox(&blueSlime);
 
   Enemy redSlime;
-  CreateEnemy(&redSlime, GetScreenWidth() + 400, 340, enemyTextures[1], 8, 80.0f, 2, 3, 1.5f);
+  CreateEnemy(&redSlime, GetScreenWidth() + ENEMY_APARISON_CONSTANT, 340, enemyTextures[1], 8, 80.0f, 2, 3, 1.5f);
   CreateEnemyHitbox(&redSlime);
 
+  // Inserção de inimigos aleatórios na lista
   InsertRandomEnemies(&enemyList, 5, greenSlime, blueSlime, redSlime);
 
   Enemy *firstEnemy;
   firstEnemy = ListLSEInit(enemyList);
 
   Smoke smoke;
-  Texture2D smokeTexture = LoadTexture("../img/SlimeSmoke.png");
+  Texture2D smokeTexture = LoadTexture("../img/slimeSmoke.png");
   CreateSmoke(&smoke, firstEnemy, smokeTexture, 7);
 
+  // Criação dos botoẽs de ataque, defesa e cura
   ActionButton attackActionButton;
   CreateActionButton(&attackActionButton, 0, 0, LoadTexture("../img/botaoEspada.png"), LoadTexture("../img/botaoEspadaPreto.png"));
 
@@ -91,6 +98,7 @@ int main(void)
 
   Texture2D playerHealth[2] = {LoadTexture("../img/rHealth.png"), LoadTexture("../img/rHealthDeath.png")};
 
+  // Criação dos cronômetros necessários para as animações
   Stopwatch stopwatchRight = StopwatchCreate(RIGHT_FREQUENCY);
   Stopwatch stopwatchAttack = StopwatchCreate(ATTACK_FREQUENCY);
   Stopwatch stopwatchEnemy = StopwatchCreate(ENEMY_FREQUENCY);
@@ -101,6 +109,7 @@ int main(void)
   int frameEnemy = 0;
   int frameSmoke = 0;
 
+  // Música de fundo e som de ataque
   Sound slimeHitSound = LoadSound("../sounds/rSlimeHitSound.wav");
 
   Music backgroundMusic = LoadMusicStream("../sounds/xDeviruchi - Exploring The Unknown.wav");
@@ -115,11 +124,14 @@ int main(void)
 
     if (ListLSEIsEmpty(enemyList))
     {
-
     }
     else
       firstEnemy = ListLSEInit(enemyList);
 
+    MoveSmoke(&smoke, firstEnemy);
+    AnimateSmokeTexture(&smoke, &stopwatchSmoke, smoke.numberOfFrames, &frameSmoke, 1.0f, smoke.texture);
+
+    // Lógica do botão de volume
     if (UserClickedVolumeButton(volumeButton))
     {
       volumeButton.status = !volumeButton.status;
@@ -142,9 +154,6 @@ int main(void)
     DrawVolumeButton(volumeButton);
 
     // DrawEnemyHitbox(enemy); // ONLY activate this for debbuging
-
-    if (IsKeyPressed(KEY_K))
-      pause = !pause;
 
     if (pause == 1)
     {
@@ -185,7 +194,7 @@ int main(void)
         {
           player.score = 0;
           player.health = player.maxHealth;
-          firstEnemy->x = GetScreenWidth() - firstEnemy->texture.width / firstEnemy->numberOfFrames;
+          firstEnemy->x = GetScreenWidth() + ENEMY_APARISON_CONSTANT;
           pause = 0;
         }
       }
@@ -202,6 +211,7 @@ int main(void)
       if (!IsMusicStreamPlaying(backgroundMusic))
         PlayMusicStream(backgroundMusic);
 
+      // Animação de ataque dos inimigos
       if (firstEnemy->isAttacking == 1 && firstEnemy->x < 400)
       {
         firstEnemy->x += 10;
@@ -237,7 +247,6 @@ int main(void)
         {
           UpdateScore(&player, 10);
           checkedCollision = 1;
-          MoveSmoke(&smoke, firstEnemy);
 
           ListLSERemove(&enemyList, *firstEnemy);
         }
@@ -252,8 +261,6 @@ int main(void)
 
       if (checkedCollision == 1 || checkedCollision == 2)
       {
-        AnimateSmokeTexture(&smoke, &stopwatchSmoke, smoke.numberOfFrames, &frameSmoke, 0.1f, smoke.texture);
-
         if (firstEnemy->x < GetScreenWidth() + 660 && checkedCollision == 2)
           checkedCollision = 0;
 
