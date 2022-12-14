@@ -303,7 +303,12 @@ int main(void)
       }
 
       if (attackCounter <= 2)
+      {
         attackAux -= 2.0f * GetFrameTime();
+
+        if (attackAux <= 0.0f)
+          attackAux = 0.5f;
+      }
 
       if (attackCounter == 2)
       {
@@ -313,6 +318,7 @@ int main(void)
         player.isAttacking = 1;
 
         AnimatePlayerTexture(&player, &stopwatchAttack, player.numberOfFrames, &frameAttack, 1.0f, player.texture);
+
         attackActionButton.isPressed = 1;
       }
 
@@ -351,7 +357,9 @@ int main(void)
         }
         else
         {
-          ResetActionButton(&attackActionButton);
+          if (attackCounter == 0)
+            ResetActionButton(&attackActionButton);
+
           ResetActionButton(&defenseActionButton);
           ResetActionButton(&potionActionButton);
         }
