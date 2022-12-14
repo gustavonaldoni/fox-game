@@ -51,6 +51,9 @@ int pause = 0;
 int checkedCollision = 0;
 int numberOfRounds = 1;
 
+int attackCounter = 0;
+float attackAux = 0.0f;
+
 int main(void)
 {
   srand(time(NULL));
@@ -136,6 +139,8 @@ int main(void)
   {
     BeginDrawing();
     ClearBackground(RAYWHITE);
+
+    attackCounter = (int)attackAux;
 
     if (ListLSEIsEmpty(enemyList))
     {
@@ -291,12 +296,22 @@ int main(void)
           checkedCollision = 2;
       }
 
-      if (IsKeyDown(KEY_A))
+      if (IsKeyPressed(KEY_A))
+      {
+        attackAux = 1.9f;
+      }
+
+      if (attackCounter == 1)
       {
         player.texture = playerTextures[1];
         player.y = PLAYER_BASE_Y_ATTACK;
         player.numberOfFrames = 9;
         player.isAttacking = 1;
+
+        attackAux -= 0.04f;
+
+        if (attackAux <= 0.0f)
+          attackAux = 0.0f;
 
         AnimatePlayerTexture(&player, &stopwatchAttack, player.numberOfFrames, &frameAttack, 1.0f, player.texture);
         attackActionButton.isPressed = 1;
