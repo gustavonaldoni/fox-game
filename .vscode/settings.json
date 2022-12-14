@@ -8,6 +8,7 @@
         "actionbutton.h": "c",
         "animation.h": "c",
         "raymath.h": "c",
-        "deathscreen.h": "c"
+        "deathscreen.h": "c",
+        "volumebutton.h": "c"
     }
 }

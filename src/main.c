@@ -16,6 +16,7 @@
 #include "score.h"
 #include "deathScreen.h"
 #include "list.h"
+#include "volumeButton.h"
 
 #define MAX_FPS 144
 #define PLAYER_BASE_Y 310
@@ -25,6 +26,9 @@
 #define RIGHT_FREQUENCY 0.08f
 #define ENEMY_FREQUENCY 0.08f
 #define SMOKE_FREQUENCY 0.08f
+
+#define MAX_VOLUME 1.0f
+#define MIN_VOLUME 0.0f
 
 int pause = 0;
 int checkedCollision = 0;
@@ -64,8 +68,6 @@ int main(void)
   CreateEnemy(&redSlime, GetScreenWidth() + 400, 340, enemyTextures[1], 8, 80.0f, 2, 3, 1.5f);
   CreateEnemyHitbox(&redSlime);
 
-  ListLSEInsertEnd(&enemyList, redSlime);
-  ListLSEInsertEnd(&enemyList, greenSlime);
   InsertRandomEnemies(&enemyList, 5, greenSlime, blueSlime, redSlime);
 
   Enemy *firstEnemy;
@@ -76,13 +78,16 @@ int main(void)
   CreateSmoke(&smoke, firstEnemy, smokeTexture, 7);
 
   ActionButton attackActionButton;
-  CreateActionButton(&attackActionButton, 0, 0, LoadTexture("../img/botaoEspada.png"), LoadTexture("../img/rPressedAttackButton.png"));
+  CreateActionButton(&attackActionButton, 0, 0, LoadTexture("../img/botaoEspada.png"), LoadTexture("../img/botaoEspadaPreto.png"));
 
   ActionButton defenseActionButton;
-  CreateActionButton(&defenseActionButton, 0, 0, LoadTexture("../img/botaoEscudo.png"), LoadTexture("../img/rPressedDefenseButton.png"));
+  CreateActionButton(&defenseActionButton, 0, 0, LoadTexture("../img/botaoEscudo.png"), LoadTexture("../img/botaoEscudoPreto.png"));
 
   ActionButton potionActionButton;
-  CreateActionButton(&potionActionButton, 0, 0, LoadTexture("../img/botaoPocao.png"), LoadTexture("../img/rPressedPotionButton.png"));
+  CreateActionButton(&potionActionButton, 0, 0, LoadTexture("../img/botaoPocao.png"), LoadTexture("../img/botaoPocaoPreto.png"));
+
+  VolumeButton volumeButton;
+  CreateVolumeButton(&volumeButton, LoadTexture("../img/botaoVolume.png"), LoadTexture("../img/botaoVolumeNone.png"));
 
   Texture2D playerHealth[2] = {LoadTexture("../img/rHealth.png"), LoadTexture("../img/rHealthDeath.png")};
 
@@ -115,6 +120,16 @@ int main(void)
     else
       firstEnemy = ListLSEInit(enemyList);
 
+    if (UserClickedVolumeButton(volumeButton))
+    {
+      volumeButton.status = !volumeButton.status;
+
+      if (volumeButton.status == 0)
+        SetMasterVolume(MIN_VOLUME);
+      else if (volumeButton.status == 1)
+        SetMasterVolume(MAX_VOLUME);
+    }
+
     ShowBackground(background);
 
     DrawPlayerHealth(player, playerHealth[0], playerHealth[1]);
@@ -123,6 +138,8 @@ int main(void)
 
     ActionButton actionButtons[3] = {attackActionButton, defenseActionButton, potionActionButton};
     DrawActionButtons(actionButtons, 3);
+
+    DrawVolumeButton(volumeButton);
 
     // DrawEnemyHitbox(enemy); // ONLY activate this for debbuging
 
