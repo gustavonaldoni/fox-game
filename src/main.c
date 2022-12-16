@@ -43,7 +43,7 @@ Matheus Evangelista
 
 #define ATTACK_BUTTON_COOLDOWN 1.0f
 #define DEFENSE_BUTTON_COOLDOWN 3.0f
-#define HEAL_BUTTON_COOLDOWN 2.0f
+#define HEAL_BUTTON_COOLDOWN 10.0f
 
 #define MAX_VOLUME 1.0f
 #define MIN_VOLUME 0.0f
@@ -128,6 +128,8 @@ int main(void)
   Stopwatch stopwatchDefenseButton = StopwatchCreate(DEFENSE_BUTTON_COOLDOWN);
   Stopwatch stopwatchHealButton = StopwatchCreate(HEAL_BUTTON_COOLDOWN);
 
+  Stopwatch actionButtonsStopwatches[3] = {stopwatchAttackButton, stopwatchDefenseButton, stopwatchHealButton};
+
   int frameRight = 0;
   int frameAttack = 0;
   int frameEnemy = 0;
@@ -179,6 +181,10 @@ int main(void)
       }
     }
 
+    actionButtonsStopwatches[0] = stopwatchAttackButton;
+    actionButtonsStopwatches[1] = stopwatchDefenseButton;
+    actionButtonsStopwatches[2] = stopwatchHealButton;
+
     BeginDrawing();
     ClearBackground(RAYWHITE);
 
@@ -211,7 +217,7 @@ int main(void)
     // DrawPlayerHitbox(player); // ONLY activate this for debbuging
 
     ActionButton actionButtons[3] = {attackActionButton, defenseActionButton, potionActionButton};
-    DrawActionButtons(actionButtons, 3);
+    DrawActionButtons(actionButtons, 3, actionButtonsStopwatches);
 
     DrawVolumeButton(volumeButton);
 
