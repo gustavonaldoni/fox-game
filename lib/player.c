@@ -12,6 +12,8 @@ void CreatePlayer(Player *player, int x, int y, Texture2D texture, int numberOfF
   player->health = player->maxHealth;
   player->numberOfFrames = numberOfFrames;
   player->isAttacking = 0;
+  player->isDefending = 0;
+  player->isHealing = 0;
   player->score = 0;
 }
 

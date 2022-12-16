@@ -36,9 +36,14 @@ Matheus Evangelista
 #define PLAYER_BASE_Y_ATTACK 220
 
 #define ATTACK_FREQUENCY 0.02f
+#define DEFENSE_FREQUENCY 0.02f
 #define RIGHT_FREQUENCY 0.08f
 #define ENEMY_FREQUENCY 0.08f
 #define SMOKE_FREQUENCY 0.2f
+
+#define ATTACK_BUTTON_COOLDOWN 1.0f
+#define DEFENSE_BUTTON_COOLDOWN 3.0f
+#define HEAL_BUTTON_COOLDOWN 2.0f
 
 #define MAX_VOLUME 1.0f
 #define MIN_VOLUME 0.0f
@@ -122,6 +127,9 @@ int main(void)
   Stopwatch stopwatchEnemy = StopwatchCreate(ENEMY_FREQUENCY);
   Stopwatch stopwatchSmoke = StopwatchCreate(SMOKE_FREQUENCY);
 
+  Stopwatch stopwatchDefenseButton = StopwatchCreate(DEFENSE_BUTTON_COOLDOWN);
+  Stopwatch stopwatchHealButton = StopwatchCreate(HEAL_BUTTON_COOLDOWN);
+
   int frameRight = 0;
   int frameAttack = 0;
   int frameEnemy = 0;
@@ -137,6 +145,30 @@ int main(void)
 
   while (!WindowShouldClose())
   {
+    if (player.isDefending)
+    {
+      defenseActionButton.isPressed = 1;
+      StopwatchUpdate(&stopwatchDefenseButton);
+
+      if (StopwatchIsDone(stopwatchDefenseButton))
+      {
+        StopwatchReset(&stopwatchDefenseButton);
+        player.isDefending = 0;
+      }
+    }
+
+    if (player.isHealing)
+    {
+      potionActionButton.isPressed = 1;
+      StopwatchUpdate(&stopwatchHealButton);
+
+      if (StopwatchIsDone(stopwatchHealButton))
+      {
+        StopwatchReset(&stopwatchHealButton);
+        player.isHealing = 0;
+      }
+    }
+
     BeginDrawing();
     ClearBackground(RAYWHITE);
 
@@ -347,12 +379,13 @@ int main(void)
           AnimatePlayerTexture(&player, &stopwatchAttack, 1, &frameAttack, 1.0f, player.texture);
         }
 
-        if (IsKeyDown(KEY_D))
+        if (IsKeyPressed(KEY_D))
         {
-          defenseActionButton.isPressed = 1;
+          player.isDefending = 1;
         }
-        else if (IsKeyDown(KEY_C))
+        else if (IsKeyPressed(KEY_C))
         {
+          player.isHealing = 1;
           potionActionButton.isPressed = 1;
         }
         else
