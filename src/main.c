@@ -56,9 +56,6 @@ int pause = 0;
 int checkedCollision = 0;
 int numberOfRounds = 1;
 
-int attackCounter = 0;
-float attackAux = 0.0f;
-
 int main(void)
 {
   srand(time(NULL));
@@ -127,6 +124,7 @@ int main(void)
   Stopwatch stopwatchEnemy = StopwatchCreate(ENEMY_FREQUENCY);
   Stopwatch stopwatchSmoke = StopwatchCreate(SMOKE_FREQUENCY);
 
+  Stopwatch stopwatchAttackButton = StopwatchCreate(ATTACK_BUTTON_COOLDOWN);
   Stopwatch stopwatchDefenseButton = StopwatchCreate(DEFENSE_BUTTON_COOLDOWN);
   Stopwatch stopwatchHealButton = StopwatchCreate(HEAL_BUTTON_COOLDOWN);
 
@@ -145,6 +143,18 @@ int main(void)
 
   while (!WindowShouldClose())
   {
+    if (player.isAttacking)
+    {
+      attackActionButton.isPressed = 1;
+      StopwatchUpdate(&stopwatchAttackButton);
+
+      if (StopwatchIsDone(stopwatchAttackButton))
+      {
+        StopwatchReset(&stopwatchAttackButton);
+        player.isAttacking = 0;
+      }
+    }
+
     if (player.isDefending)
     {
       defenseActionButton.isPressed = 1;
@@ -171,8 +181,6 @@ int main(void)
 
     BeginDrawing();
     ClearBackground(RAYWHITE);
-
-    attackCounter = (int)attackAux;
 
     if (ListLSEIsEmpty(enemyList))
     {
@@ -328,21 +336,10 @@ int main(void)
           checkedCollision = 2;
       }
 
-      if (attackCounter == 0)
-      {
-        if (IsKeyPressed(KEY_A))
-          attackAux = 2.9f;
-      }
+      if (IsKeyPressed(KEY_A))
+        player.isAttacking = 1;
 
-      if (attackCounter <= 2)
-      {
-        attackAux -= 2.0f * GetFrameTime();
-
-        if (attackAux <= 0.0f)
-          attackAux = 0.5f;
-      }
-
-      if (attackCounter == 2)
+      if (player.isAttacking)
       {
         player.texture = playerTextures[1];
         player.y = PLAYER_BASE_Y_ATTACK;
@@ -386,13 +383,10 @@ int main(void)
         else if (IsKeyPressed(KEY_C))
         {
           player.isHealing = 1;
-          potionActionButton.isPressed = 1;
         }
         else
         {
-          if (attackCounter == 0)
-            ResetActionButton(&attackActionButton);
-
+          ResetActionButton(&attackActionButton);
           ResetActionButton(&defenseActionButton);
           ResetActionButton(&potionActionButton);
         }
