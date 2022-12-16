@@ -328,8 +328,12 @@ int main(void)
         {
           firstEnemy->isAttacking = 1;
           PlaySound(slimeHitSound);
-          UpdatePlayerHealth(&player, -firstEnemy->damage);
-          UpdateScore(&player, -1);
+
+          if (!player.isDefending)
+          {
+            UpdatePlayerHealth(&player, -firstEnemy->damage);
+            UpdateScore(&player, -1);
+          }
         }
       }
 
