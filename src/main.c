@@ -386,13 +386,14 @@ int main(void)
           AnimatePlayerTexture(&player, &stopwatchAttack, 1, &frameAttack, 1.0f, player.texture);
         }
 
-        if (IsKeyPressed(KEY_D))
+        if (IsKeyPressed(KEY_D) && player.isDefending == 0)
         {
           player.isDefending = 1;
         }
-        else if (IsKeyPressed(KEY_C))
+        else if (IsKeyPressed(KEY_C) && player.isHealing == 0)
         {
           player.isHealing = 1;
+          UpdatePlayerHealth(&player, 1);
         }
         else
         {
