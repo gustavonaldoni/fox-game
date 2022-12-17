@@ -20,7 +20,6 @@ Matheus Evangelista
 #include "player.h"
 #include "stopwatch.h"
 #include "enemy.h"
-#include "smoke.h"
 #include "animation.h"
 #include "collision.h"
 #include "background.h"
@@ -42,8 +41,8 @@ Matheus Evangelista
 #define SMOKE_FREQUENCY 0.2f
 
 #define ATTACK_BUTTON_COOLDOWN 1.0f
-#define DEFENSE_BUTTON_COOLDOWN 3.0f
-#define HEAL_BUTTON_COOLDOWN 10.0f
+#define DEFENSE_BUTTON_COOLDOWN 5.0f
+#define HEAL_BUTTON_COOLDOWN 15.0f
 
 #define MAX_VOLUME 1.0f
 #define MIN_VOLUME 0.0f
@@ -70,10 +69,10 @@ int main(void)
   Texture2D grayTexture = LoadTexture("../img/gray.png");
 
   Texture2D backgroundTexture = LoadTexture("../img/rCenario.png");
-  Background background;
+  Background background = {0};
   CreateBackground(&background, backgroundTexture);
 
-  Player player;
+  Player player = {0};
   Texture2D playerTextures[5] = {LoadTexture("../img/rDireita.png"), LoadTexture("../img/rAtaque.png"), LoadTexture("../img/foxHit.png"), LoadTexture("../img/foxDie.png"), LoadTexture("../img/foxBreathing.png")};
   CreatePlayer(&player, 100, PLAYER_BASE_Y, playerTextures[0], 7);
   CreatePlayerHitbox(&player);
@@ -81,39 +80,35 @@ int main(void)
   Texture2D enemyTextures[3] = {LoadTexture("../img/SlimeRtoL_Green.png"), LoadTexture("../img/SlimeRtoL_Red.png"), LoadTexture("../img/SlimeRtoL_Blue.png")};
 
   // Criação dos inimigos
-  Enemy greenSlime;
+  Enemy greenSlime = {0};
   CreateEnemy(&greenSlime, GetScreenWidth() + ENEMY_APARISON_CONSTANT, 375, enemyTextures[0], 8, 100.0f, 1, 1, 1.0f);
   CreateEnemyHitbox(&greenSlime);
 
-  Enemy blueSlime;
+  Enemy blueSlime = {0};
   CreateEnemy(&blueSlime, GetScreenWidth() + ENEMY_APARISON_CONSTANT, 375, enemyTextures[2], 8, 250.0f, 1, 2, 1.0f);
   CreateEnemyHitbox(&blueSlime);
 
-  Enemy redSlime;
+  Enemy redSlime = {0};
   CreateEnemy(&redSlime, GetScreenWidth() + ENEMY_APARISON_CONSTANT, 340, enemyTextures[1], 8, 80.0f, 2, 3, 1.5f);
   CreateEnemyHitbox(&redSlime);
 
   // Inserção de inimigos aleatórios na lista
   InsertRandomEnemies(&enemyList, FIRST_ROUND_ENEMIES, greenSlime, blueSlime, redSlime);
 
-  Enemy *firstEnemy;
+  Enemy *firstEnemy = NULL;
   firstEnemy = ListLSEInit(enemyList);
 
-  Smoke smoke;
-  Texture2D smokeTexture = LoadTexture("../img/slimeSmoke.png");
-  CreateSmoke(&smoke, firstEnemy, smokeTexture, 7);
-
   // Criação dos botoẽs de ataque, defesa e cura
-  ActionButton attackActionButton;
+  ActionButton attackActionButton = {0};
   CreateActionButton(&attackActionButton, 0, 0, LoadTexture("../img/botaoEspada.png"), LoadTexture("../img/botaoEspadaPreto.png"));
 
-  ActionButton defenseActionButton;
+  ActionButton defenseActionButton = {0};
   CreateActionButton(&defenseActionButton, 0, 0, LoadTexture("../img/botaoEscudo.png"), LoadTexture("../img/botaoEscudoPreto.png"));
 
-  ActionButton potionActionButton;
+  ActionButton potionActionButton = {0};
   CreateActionButton(&potionActionButton, 0, 0, LoadTexture("../img/botaoPocao.png"), LoadTexture("../img/botaoPocaoPreto.png"));
 
-  VolumeButton volumeButton;
+  VolumeButton volumeButton = {0};
   CreateVolumeButton(&volumeButton, LoadTexture("../img/botaoVolume.png"), LoadTexture("../img/botaoVolumeNone.png"));
 
   Texture2D playerHealth[2] = {LoadTexture("../img/rHealth.png"), LoadTexture("../img/rHealthDeath.png")};
@@ -122,7 +117,6 @@ int main(void)
   Stopwatch stopwatchRight = StopwatchCreate(RIGHT_FREQUENCY);
   Stopwatch stopwatchAttack = StopwatchCreate(ATTACK_FREQUENCY);
   Stopwatch stopwatchEnemy = StopwatchCreate(ENEMY_FREQUENCY);
-  Stopwatch stopwatchSmoke = StopwatchCreate(SMOKE_FREQUENCY);
 
   Stopwatch stopwatchAttackButton = StopwatchCreate(ATTACK_BUTTON_COOLDOWN);
   Stopwatch stopwatchDefenseButton = StopwatchCreate(DEFENSE_BUTTON_COOLDOWN);
@@ -133,7 +127,6 @@ int main(void)
   int frameRight = 0;
   int frameAttack = 0;
   int frameEnemy = 0;
-  int frameSmoke = 0;
 
   // Música de fundo e som de ataque
   Sound slimeHitSound = LoadSound("../sounds/rSlimeHitSound.wav");
@@ -145,6 +138,14 @@ int main(void)
 
   while (!WindowShouldClose())
   {
+    if (ListLSEIsEmpty(enemyList))
+    {
+      InsertRandomEnemies(&enemyList, FIRST_ROUND_ENEMIES - 1 + numberOfRounds, greenSlime, blueSlime, redSlime);
+      numberOfRounds++;
+    }
+    else
+      firstEnemy = ListLSEInit(enemyList);
+
     if (player.isAttacking)
     {
       attackActionButton.isPressed = 1;
@@ -187,17 +188,6 @@ int main(void)
 
     BeginDrawing();
     ClearBackground(RAYWHITE);
-
-    if (ListLSEIsEmpty(enemyList))
-    {
-      InsertRandomEnemies(&enemyList, FIRST_ROUND_ENEMIES - 1 + numberOfRounds, greenSlime, blueSlime, redSlime);
-      numberOfRounds++;
-    }
-    else
-      firstEnemy = ListLSEInit(enemyList);
-
-    MoveSmoke(&smoke, firstEnemy);
-    AnimateSmokeTexture(&smoke, &stopwatchSmoke, smoke.numberOfFrames, &frameSmoke, 1.0f, smoke.texture);
 
     // Lógica do botão de volume
     if (UserClickedVolumeButton(volumeButton))
