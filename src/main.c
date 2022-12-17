@@ -143,8 +143,8 @@ int main(void)
       InsertRandomEnemies(&enemyList, FIRST_ROUND_ENEMIES - 1 + numberOfRounds, greenSlime, blueSlime, redSlime);
       numberOfRounds++;
     }
-    else
-      firstEnemy = ListLSEInit(enemyList);
+
+    firstEnemy = ListLSEInit(enemyList);
 
     if (player.isAttacking)
     {
