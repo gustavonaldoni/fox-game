@@ -29,6 +29,7 @@ Matheus Evangelista
 #include "list.h"
 #include "volumeButton.h"
 #include "numberOfRounds.h"
+#include "volumeBar.h"
 
 #define MAX_FPS 144
 #define PLAYER_BASE_Y 310
@@ -54,6 +55,7 @@ Matheus Evangelista
 int pause = 0;
 int checkedCollision = 0;
 int numberOfRounds = 1;
+float volume = 1.0f;
 
 int main(void)
 {
@@ -110,6 +112,9 @@ int main(void)
 
   VolumeButton volumeButton = {0};
   CreateVolumeButton(&volumeButton, LoadTexture("../img/botaoVolume.png"), LoadTexture("../img/botaoVolumeNone.png"));
+
+  VolumeBar volumeBar = {0};
+  CreateVolumeBar(&volumeBar, volumeButton.x + volumeButton.volumeOnTexture.width * volumeButton.scaleFactor + 5, volumeButton.y + 10, 100, 20);
 
   Texture2D playerHealth[2] = {LoadTexture("../img/rHealth.png"), LoadTexture("../img/rHealthDeath.png")};
 
@@ -189,17 +194,6 @@ int main(void)
     BeginDrawing();
     ClearBackground(RAYWHITE);
 
-    // Lógica do botão de volume
-    if (UserClickedVolumeButton(volumeButton))
-    {
-      volumeButton.status = !volumeButton.status;
-
-      if (volumeButton.status == 0)
-        SetMasterVolume(MIN_VOLUME);
-      else if (volumeButton.status == 1)
-        SetMasterVolume(MAX_VOLUME);
-    }
-
     ShowBackground(background);
 
     DrawPlayerHealth(player, playerHealth[0], playerHealth[1]);
@@ -210,6 +204,7 @@ int main(void)
     DrawActionButtons(actionButtons, 3, actionButtonsStopwatches);
 
     DrawVolumeButton(volumeButton);
+    DrawVolumeBar(volumeBar);
 
     DrawRoundNumber(numberOfRounds);
 
@@ -266,6 +261,19 @@ int main(void)
 
     else
     {
+      // Lógica do botão de volume
+      if (UserClickedVolumeButton(volumeButton))
+      {
+        volumeButton.status = !volumeButton.status;
+
+        if (volumeButton.status == 0)
+          volume = MIN_VOLUME;
+        else if (volumeButton.status == 1)
+          volume = MAX_VOLUME;
+      }
+
+      UpdateVolumeBar(&volumeBar, &volume);
+      SetMasterVolume(volume);
       stopwatchRight.endSeconds = RIGHT_FREQUENCY;
       stopwatchAttack.endSeconds = ATTACK_FREQUENCY;
       stopwatchEnemy.endSeconds = ENEMY_FREQUENCY;
