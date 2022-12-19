@@ -261,6 +261,11 @@ int main(void)
 
     else
     {
+      if (volume == 0.0f)
+        volumeButton.status = 0;
+      else if (volume > 0.0f && volume <= 1.0f)
+        volumeButton.status = 1;
+
       // Lógica do botão de volume
       if (UserClickedVolumeButton(volumeButton))
       {
@@ -274,6 +279,7 @@ int main(void)
 
       UpdateVolumeBar(&volumeBar, &volume);
       SetMasterVolume(volume);
+
       stopwatchRight.endSeconds = RIGHT_FREQUENCY;
       stopwatchAttack.endSeconds = ATTACK_FREQUENCY;
       stopwatchEnemy.endSeconds = ENEMY_FREQUENCY;
